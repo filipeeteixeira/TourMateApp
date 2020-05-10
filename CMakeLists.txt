@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD 14)
 link_libraries(ws2_32 wsock32)
 
 include_directories(lib)
-add_executable(TourMateApp src/main.cpp)
+add_executable(TourMateApp src/main.cpp src/Graph.h)
