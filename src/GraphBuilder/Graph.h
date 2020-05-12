@@ -33,6 +33,11 @@ public:
 	vector<Vertex *> getVertexSet() const;
 
 	/*
+	 *
+	//FP04 - search
+	vector<T> Graph<T>::dfs() const
+	void dfsVisit(Vertex<T> *v,  vector<T> & res) const;
+
 	// Fp05 - single source
 	void unweightedShortestPath(const T &s);    //TODO...
 	void dijkstraShortestPath(const T &s);      //TODO...
@@ -45,7 +50,28 @@ public:
 */
 };
 
+/**************** Search algorithm ************/
+/*
+template <class T>
+vector<T> Graph<T>::dfs() const {
+	vector<T> res;
+	for(auto vertex :vertexSet)
+	    vertex->visited = false;
+    for (auto v : vertexSet)
+        if (!v->visited)
+            dfsVisit(v, res);
+	return res;
+}
 
+void Graph<T>::dfsVisit(Vertex<T> *v, vector<T> & res) const {
+	v->visited = true;
+	res.push_back(v->info);
+	for(auto a: v->adj){
+	    auto vert = a.dest;
+	    if(!vert->visited) dfsVisit(vert,res);
+	}
+}
+ */
 /**************** Single Source Shortest Path algorithms ************/
 /*
 template<class T>
