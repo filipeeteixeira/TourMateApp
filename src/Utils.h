@@ -5,32 +5,13 @@
 #ifndef TOURMATEAPP_UTILS_H
 #define TOURMATEAPP_UTILS_H
 
+#include <string>
+#include <iostream>
+
 using namespace std;
 
-void clear()
-{
-    for(int i=0; i < 50; i++)cout << endl;
-}
+void clear();
 
-bool readInt(int & n, const string msg)
-{
-    cout << msg << " ? ";
-    while (!(cin >> n))
-    {
-        if (cin.eof())
-        {
-            cin.clear();
-            return false;
-        }
-        else
-        {
-            cin.clear();
-            cin.ignore(1000, '\n');
-        }
-        cout << msg << " ? ";
-    }
-    cin.ignore(1000, '\n');
-    return true;
-}
+bool readInt(int & n, const string msg);
 
 #endif //TOURMATEAPP_UTILS_H
