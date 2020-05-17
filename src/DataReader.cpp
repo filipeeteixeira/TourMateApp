@@ -149,23 +149,27 @@ void DataReader::displayGraph(int width, int height) {
         graphViewer->defineEdgeColor("black");
         graphViewer->defineEdgeCurved(false);
 
+        Vertex* currentVertex = new Vertex(0,0,0);
+        vector<Vertex*> vertexSet = graph.getVertexSet();
         int edgeID = 0;
-        for (auto vertex : this->graph.getVertexSet()) {
-            if (!nodesFilenameLatLon.empty()) {
-                double yPercent = 1.0 - ((vertex->getY() - graph.getminY()) / (graph.getmaxY() - graph.getminY()) * 0.9 + 0.05);
-                double xPercent = (vertex->getX() - graph.getminX()) / (graph.getmaxX() - graph.getminX()) * 0.9 + 0.05;
-                graphViewer->addNode(vertex->getId(), (int) (xPercent * width), (int) (yPercent * height));
-            }
-            else{
-                graphViewer->addNode(vertex->getId(), vertex->getX(), vertex->getY());
-            }
-            graphViewer->rearrange();
+        double offsetX = vertexSet.at(0)->getX();
+        double offsetY = vertexSet.at(0)->getY();
+
+        vector<Edge> edges;
+        vector<Vertex> auxiliar_edges;
+        vector<Edge> currentEdges;
+
+        for(size_t i = 0; i < vertexSet.size(); i++){
+            currentVertex = vertexSet.at(i);
+            graphViewer->addNode(currentVertex->getId(), currentVertex->getX()-offsetX, currentVertex->getY()-offsetY);
+            currentEdges = currentVertex->getAdj();
+            auxiliar_edges.insert(auxiliar_edges.end(), currentEdges.size(), *currentVertex);
+            edges.insert(edges.end(), currentEdges.begin(), currentEdges.end());
         }
-        for (auto vertex : this->graph.getVertexSet()) {
-            for (auto edge : vertex->getAdj()) {
-                graphViewer->addEdge(edgeID++, vertex->getId(), edge.getDest()->getId(), EdgeType::DIRECTED);
-            }
-            graphViewer->rearrange();
+
+        for(size_t i = 0; i < edges.size(); i++){
+            graphViewer->addEdge(edgeID, auxiliar_edges[i].getId(), edges[i].getDest()->getId(), EdgeType::DIRECTED);
+            edgeID++;
         }
 
         graphViewer->rearrange();
