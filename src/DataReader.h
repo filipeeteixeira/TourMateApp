@@ -12,23 +12,28 @@
 using namespace std;
 
 class DataReader {
-    string nodesFilename;
+    string nodesFilenameXY;
+    string nodesFilenameLatLon;
     string edgesFilename;
+    string tagsFilename;
 
     Graph graph;
     GraphViewer* graphViewer;
 
     void readNodes();
     void readEdges();
+    void readTags();
 
     public:
-        DataReader(const string &nodesFilename,const string &edgesFilename);
+        DataReader();
 
         Graph getGraph();
 
-        void viewGraph();
+        void displayGraph(int width, int height);
 
-        void readData();
+        void readData(string city, string gridGraph);
+
+        void setFiles(string city, string gridGraph);
 };
 
 

@@ -2,18 +2,9 @@
 // Created by breno on 5/12/2020.
 //
 
-#include <string>
-#include <iostream>
 #include "Menu.h"
-#include "Utils.h"
-#include "DataReader.h"
-#include "GraphBuilder/Vertex.h"
-#include "GraphBuilder/Edge.h"
-#include "User.h"
 
-string nodesFilename = "../res/GridGraphs/4x4/nodes.txt";
-string edgesFilename = "../res/GridGraphs/4x4/edges.txt";
-
+DataReader dataReader;
 User user;
 
 using namespace std;
@@ -30,7 +21,7 @@ void showMainMenu(){
 }
 
 void menu(){
-    int option;
+    unsigned int option;
 
     do{
         clear();
@@ -67,6 +58,7 @@ void showUserLoadOptions() {
     cout << "   [1] Change/Add User Name" << endl;
     cout << "   [2] Change/Add User Age" << endl;
     cout << "   [3] Add Preference" << endl;
+    cout << "   [4] Insert Available time" << endl;
     cout << "   [0] BACK" << endl;
 }
 
@@ -85,7 +77,7 @@ void showPreferenceSelection() {
     cout << "   [0] BACK" << endl;
 }
 void choosePreferences() {
-    int option;
+    unsigned int option;
 
     do{
         clear();
@@ -162,10 +154,11 @@ void showUserInfo() {
     cout << "   Preferences:" <<endl;
     for(auto p: pref)
         cout << "   " << p << endl;
+    cout << "   Available time:" <<endl;
 }
 
 void userLoadOptions(){
-    int option;
+    unsigned int option;
     string aux;
 
     do{
@@ -178,7 +171,7 @@ void userLoadOptions(){
                 break;
             case 2:
                 clear();
-                int age;
+                unsigned int age;
                 readInt(age, "Age");
                 user.setAge(age);
                 cout << "Press any key to continue ...";
@@ -191,6 +184,12 @@ void userLoadOptions(){
                 user.setName(aux);
                 cout << "Press any key to continue ...";
                 getchar();
+                break;
+            case 4:
+                clear();
+                unsigned int time;
+                cout << "Available time?";
+                readInt(time,"Time");
                 break;
             case 0:
                 return;
@@ -205,7 +204,7 @@ void userLoadOptions(){
 }
 
 void userOptions(){
-    int option;
+    unsigned int option;
 
     do{
         clear();
@@ -232,6 +231,16 @@ void userOptions(){
     }while(true);
 }
 
+void askForCity(string &city) {
+    do{
+        getline(cin, city);
+        normalizeCity(city);
+        if(city == "Aveiro" || city == "Braga" || city == "Coimbra" || city == "Ermesinde" || city == "Fafe" || city == "Gondomar" || city == "Lisboa" || city == "Maia" || city == "Porto"  || city == "Viseu")
+            break;
+        cout << "Invalid city name.";
+    }while(true);
+}
+
 void showTourOptions(){
     cout << "TOUR OPTIONS: " << endl;
     cout << "   [1] New Tour" << endl;
@@ -239,16 +248,24 @@ void showTourOptions(){
 }
 
 void tourOptions(){
-    int option;
+    unsigned int option;
     do{
         clear();
         showTourOptions();
         readInt(option, "Option");
         switch(option){
-            case 1:
-                cout << "To be done..." << endl;
+            case 1: {
+                string city;
+                cout << "Select the city to make a tour" << endl;
+                askForCity(city);
+
+                cout << "Loading city graph..." << endl;
+                dataReader.readData(city, "");
+                cout << "Graph loaded." << endl;
+
                 cout << "Press any key to continue ...";
                 getchar();
+            }
             case 0:
                 return;
             default:
@@ -261,6 +278,7 @@ void tourOptions(){
     }while(true);
 }
 
+
 void showGraphOptions(){
     cout << "GRAPH OPTIONS: " << endl;
     cout << "   [1] Show Graph" << endl;
@@ -269,19 +287,16 @@ void showGraphOptions(){
 }
 
 void graphOptions(){
-    int option;
+    unsigned int option;
 
     do{
         clear();
         showGraphOptions();
-        DataReader dataReader(nodesFilename, edgesFilename);
         readInt(option, "Option");
 
         switch(option){
             case 1:
-
-                dataReader.readData();
-                dataReader.viewGraph();
+                dataReader.displayGraph(750,750);
                 break;
             case 2:
                 chooseGraphOptions();
@@ -308,7 +323,7 @@ void showGraphSelectionOptions(){
 
 
 void chooseGraphOptions() {
-    int option;
+    unsigned int option;
 
     do{
         clear();
@@ -316,22 +331,19 @@ void chooseGraphOptions() {
         readInt(option, "Option");
         switch(option){
             case 1:
-                nodesFilename = "../res/GridGraphs/4x4/nodes.txt";
-                edgesFilename = "../res/GridGraphs/4x4/edges.txt";
+                dataReader.readData("","4x4");
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
-                nodesFilename = "../res/GridGraphs/8x8/nodes.txt";
-                edgesFilename = "../res/GridGraphs/8x8/edges.txt";
+                dataReader.readData("","8x8");
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
-                nodesFilename = "../res/GridGraphs/16x16/nodes.txt";
-                edgesFilename = "../res/GridGraphs/16x16/edges.txt";
+                dataReader.readData("","16x16");
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();

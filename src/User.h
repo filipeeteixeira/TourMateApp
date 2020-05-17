@@ -19,10 +19,12 @@ public:
     void setName(string newName);
     void setAge(int newAge);
     list<string> getPreferences() const;
+    unsigned int getAvailableTime() const;
 private:
     list<string> preferences;
     string name;
     unsigned int age;
+    unsigned int availableTime;
 };
 
 

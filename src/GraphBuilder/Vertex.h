@@ -9,6 +9,7 @@
 #include "MutablePriorityQueue.h"
 #include <vector>
 #include <string>
+#include "../Utils.h"
 
 using namespace std;
 
@@ -19,7 +20,10 @@ class Vertex {
     string name = "undefined"; //nome do local
     double x;
     double y;
+    double lat;
+    double lon;
     bool visited=false;
+    string tag;
 
     double dist = 0;
     vector<Edge> adj;		// outgoing edges
@@ -41,6 +45,18 @@ public:
 
     double getY() const;
 
+    double getLat() const;
+
+    double getLon() const;
+
+    void setLat(double lat);
+
+    void setLon(double lon);
+
+    string getTag();
+
+    void setTag(string tag);
+
     bool operator==(const Vertex &rhs) const;
 
     bool getVisited() const;
@@ -54,6 +70,8 @@ public:
     vector<Edge> getAdj() const;
 
     double getDist() const;
+
+    long double distance(Vertex *v);
 
     friend class Graph;
     friend class MutablePriorityQueue<Vertex>;

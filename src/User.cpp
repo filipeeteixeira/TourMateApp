@@ -7,6 +7,7 @@
 User::User() {
     name = "UNDEFINED";
     age = 0;
+    availableTime = 0;
 }
 
 void User::addPreference(string preference) {
@@ -33,4 +34,8 @@ void User::setName(string newName) {
 
 void User::setAge(int newAge) {
     age = newAge;
+}
+
+unsigned int User::getAvailableTime() const {
+    return availableTime;
 }

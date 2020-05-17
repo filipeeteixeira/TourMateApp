@@ -24,6 +24,14 @@ double Vertex::getY() const{
     return y;
 }
 
+double Vertex::getLat() const{
+    return lat;
+}
+
+double Vertex::getLon() const{
+    return lon;
+}
+
 bool Vertex::getVisited() const{
     return visited;
 }
@@ -62,4 +70,50 @@ double Vertex::getDist() const{
 
 void Vertex::addEdge(Vertex *dest, double w) {
     adj.emplace_back(dest, w);
+}
+
+void Vertex::setLon(double lon){
+    this->lon=lon;
+}
+
+void Vertex::setLat(double lat) {
+    this->lat=lat;
+}
+
+long double Vertex::distance(Vertex *v)
+{
+    // Convert the latitudes
+    // and longitudes
+    // from degree to radians.
+    long double lat1 = toRadians(lat);
+    long double lon1 = toRadians(lon);
+    long double lat2 = toRadians(v->getLat());
+    long double lon2 = toRadians(v->getLon());
+
+    // Haversine Formula
+    long double dlon = lon2 - lon1;
+    long double dlat = lat2 - lat1;
+
+    long double ans = pow(sin(dlat / 2), 2) +
+                      cos(lat1) * cos(lat2) *
+                      pow(sin(dlon / 2), 2);
+
+    ans = 2 * asin(sqrt(ans));
+
+    // Radius of Earth in
+    // Kilometers, R = 6371
+    long double R = 6371;
+
+    // Calculate the result
+    ans = ans * R;
+
+    return ans;
+}
+
+string Vertex::getTag() {
+    return tag;
+}
+
+void Vertex::setTag(string tag) {
+    this->tag=tag;
 }

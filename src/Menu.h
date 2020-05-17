@@ -5,6 +5,14 @@
 #ifndef TOURMATEAPP_MENU_H
 #define TOURMATEAPP_MENU_H
 
+#include <string>
+#include <iostream>
+#include "Utils.h"
+#include "DataReader.h"
+#include "GraphBuilder/Vertex.h"
+#include "GraphBuilder/Edge.h"
+#include "User.h"
+
 void menu();
 void showMainMenu();
 

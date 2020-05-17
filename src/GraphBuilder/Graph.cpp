@@ -35,3 +35,35 @@ int Graph::getNumVertex() const {
 vector<Vertex *> Graph::getVertexSet() const {
     return vertexSet;
 }
+
+double Graph::getmaxX() const {
+    return maxX;
+}
+
+double Graph::getmaxY() const {
+    return maxY;
+}
+
+double Graph::getminX() const {
+    return minX;
+}
+
+double Graph::getminY() const {
+    return minY;
+}
+
+void Graph::setmaxX(double maxX) {
+    this->maxX=maxX;
+}
+
+void Graph::setmaxY(double maxY) {
+    this->maxY=maxY;
+}
+
+void Graph::setminX(double minX) {
+    this->minX=minX;
+}
+
+void Graph::setminY(double minY) {
+    this->minY=minY;
+}

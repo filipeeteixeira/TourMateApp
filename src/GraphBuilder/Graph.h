@@ -25,12 +25,27 @@ class Graph {
     vector<vector<double>> dist;
     vector<vector<Vertex*> > pred;
 
+    double minX = std::numeric_limits<double>::max();
+    double minY = std::numeric_limits<double>::max();
+    double maxX = std::numeric_limits<double>::min();
+    double maxY = std::numeric_limits<double>::min();
+
 public:
 	Vertex *findVertex(const int &id) const;
 	bool addVertex(const int &id, const double &x, const double &y);
 	bool addEdge(const int &sourc, const int &dest, double w);
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
+
+	double getmaxX() const;
+	double getmaxY() const;
+    double getminX() const;
+    double getminY() const;
+
+    void setmaxX(double maxX);
+    void setmaxY(double maxY);
+    void setminX(double minX);
+    void setminY(double minY);
 
 	/*
 	 *
