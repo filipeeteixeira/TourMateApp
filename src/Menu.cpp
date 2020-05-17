@@ -3,6 +3,8 @@
 //
 
 #include "Menu.h"
+#include "GraphBuilder/Graph.h"
+#include "GraphBuilder/Vertex.h"
 
 DataReader dataReader;
 User user;
@@ -263,7 +265,31 @@ void tourOptions(){
                 cout << "Loading city graph..." << endl;
                 dataReader.readData(city, "");
                 cout << "Graph loaded." << endl;
+                //------90379617 122528348
+                Graph g = dataReader.getGraph();
+                Vertex *sv, *dv;
+                do{
+                    unsigned int src, dest;
+                    readInt(src, "Select origin");
+                    readInt(dest, "Select destination");
 
+                    sv = dataReader.getGraph().findVertex(src);
+                    dv = dataReader.getGraph().findVertex(dest);
+                    if(dataReader.getGraph().findVertex(src)!=nullptr && dataReader.getGraph().findVertex(dest)!=nullptr)
+                        break;
+                    cout << "Invalid path." << endl;
+                }while(true);
+
+                dataReader.getGraph().dijkstraShortestPath(*sv, *dv);
+                cout << "1";
+                vector<int> path =  dataReader.getGraph().getPath(*sv, *dv);
+                cout << "2";
+                for(int i=0; i < path.size(); i++){
+                    cout << g.findVertex(path.at(i))->getName() << "->";
+                }
+                cout << endl;
+
+                //------
                 cout << "Press any key to continue ...";
                 getchar();
             }

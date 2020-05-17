@@ -117,3 +117,7 @@ string Vertex::getTag() {
 void Vertex::setTag(string tag) {
     this->tag=tag;
 }
+
+bool Vertex::operator<(Vertex &vertex) const {
+    return this->dist < vertex.dist;
+}

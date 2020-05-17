@@ -31,6 +31,9 @@ class Vertex {
     int queueIndex = 0; 		// required by MutablePriorityQueue
     void addEdge(Vertex *dest, double w);
 public:
+
+    bool operator<(Vertex & vertex) const; // // required by MutablePriorityQueue
+
     Vertex(int id, double x, double y);
 
     Vertex(int id, const string name, double x, double y);

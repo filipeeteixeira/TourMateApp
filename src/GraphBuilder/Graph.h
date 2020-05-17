@@ -35,22 +35,27 @@ public:
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
-	/*
-	 *
-	//FP04 - search
-	vector<T> Graph<T>::dfs() const
-	void dfsVisit(Vertex<T> *v,  vector<T> & res) const;
+    Vertex *initSingleSource(const int &origin);
+    bool relax(Vertex *v, Vertex *w, double weight);
+    void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
+    vector<int> getPath(const Vertex &origin, const Vertex &dest) const;
+    /*
+     *
+    //FP04 - search
+    vector<T> Graph<T>::dfs() const
+    void dfsVisit(Vertex<T> *v,  vector<T> & res) const;
 
-	// Fp05 - single source
-	void unweightedShortestPath(const T &s);    //TODO...
-	void dijkstraShortestPath(const T &s);      //TODO...
-	void bellmanFordShortestPath(const T &s);   //TODO...
-	vector<T> getPathTo(const T &dest) const;   //TODO...
+    // Fp05 - single source
+    void unweightedShortestPath(const T &s);    //TODO...
+    void dijkstraShortestPath(const T &s);      //TODO...
+    void bellmanFordShortestPath(const T &s);   //TODO...
+    vector<T> getPathTo(const T &dest) const;   //TODO...
 
-	// Fp05 - all pairs
-	void floydWarshallShortestPath();   //TODO...
-	vector<T> getfloydWarshallPath(const T &origin, const T &dest) const;   //TODO...
+    // Fp05 - all pairs
+    void floydWarshallShortestPath();   //TODO...
+    vector<T> getfloydWarshallPath(const T &origin, const T &dest) const;   //TODO...
 */
+
 };
 
 /**************** Search algorithm ************/
