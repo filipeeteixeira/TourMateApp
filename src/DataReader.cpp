@@ -145,30 +145,43 @@ void DataReader::displayGraph(int width, int height) {
         graphViewer->defineEdgeColor("black");
         graphViewer->defineEdgeCurved(false);
 
-        //codigo de um trabalho do ano passado-------------------------
-        Vertex* currentVertex;
-        vector<Vertex*> vertexSet = graph.getVertexSet();
-        int edgeID = 0;
-        double offsetX = vertexSet.at(0)->getX();
-        double offsetY = vertexSet.at(0)->getY();
+        if(realMaps) {
+            //codigo de um trabalho do ano passado-------------------------
+            Vertex *currentVertex;
+            vector<Vertex *> vertexSet = graph.getVertexSet();
+            int edgeID = 0;
+            double offsetX = vertexSet.at(0)->getX();
+            double offsetY = vertexSet.at(0)->getY();
 
-        vector<Edge> edges;
-        vector<Vertex> auxiliar_edges;
-        vector<Edge> currentEdges;
+            vector<Edge> edges;
+            vector<Vertex> auxiliar_edges;
+            vector<Edge> currentEdges;
 
-        for(size_t i = 0; i < vertexSet.size(); i++){
-            currentVertex = vertexSet.at(i);
-            graphViewer->addNode(currentVertex->getId(), currentVertex->getX()-offsetX, currentVertex->getY()-offsetY);
-            currentEdges = currentVertex->getAdj();
-            auxiliar_edges.insert(auxiliar_edges.end(), currentEdges.size(), *currentVertex);
-            edges.insert(edges.end(), currentEdges.begin(), currentEdges.end());
+            for (size_t i = 0; i < vertexSet.size(); i++) {
+                currentVertex = vertexSet.at(i);
+                graphViewer->addNode(currentVertex->getId(), currentVertex->getX() - offsetX,
+                                     currentVertex->getY() - offsetY);
+                currentEdges = currentVertex->getAdj();
+                auxiliar_edges.insert(auxiliar_edges.end(), currentEdges.size(), *currentVertex);
+                edges.insert(edges.end(), currentEdges.begin(), currentEdges.end());
+            }
+
+            for (size_t i = 0; i < edges.size(); i++) {
+                graphViewer->addEdge(edgeID, auxiliar_edges[i].getId(), edges[i].getDest()->getId(),
+                                     EdgeType::DIRECTED);
+                edgeID++;
+            }
         }
+        else{
+            int edgeID = 0;
+            for (auto vertex : this->graph.getVertexSet()) {
+                graphViewer->addNode(vertex->getId(), vertex->getX(), vertex->getY());
+                graphViewer->setVertexLabel(vertex->getId(), to_string(vertex->getId()));
+                for (auto edge : vertex->getAdj())
+                    graphViewer->addEdge(edgeID++, vertex->getId(), edge.getDest()->getId(), EdgeType::UNDIRECTED);
+            }
 
-        for(size_t i = 0; i < edges.size(); i++){
-            graphViewer->addEdge(edgeID, auxiliar_edges[i].getId(), edges[i].getDest()->getId(), EdgeType::DIRECTED);
-            edgeID++;
         }
-
         graphViewer->rearrange();
         //----------------------------------
     }
