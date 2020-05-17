@@ -43,6 +43,7 @@ void DataReader::readNodes() {
         y=stof(tmp);
 
         graph.addVertex(nodeId, x, y);
+
     }
 
     if(realMaps) { //para podermos testar com os GridGraphs

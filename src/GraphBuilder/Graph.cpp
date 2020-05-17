@@ -6,16 +6,18 @@
 #include "Graph.h"
 
 Vertex * Graph::findVertex(const int &id) const {
-    for (auto v : vertexSet)
-        if (v->id == id)
-            return v;
-    return NULL;
+    auto i = vertexMap.find(id);
+    if (i == vertexMap.end()) {
+        return nullptr;
+    }
+    return vertexSet.at(i->second);
 }
 
 bool Graph::addVertex(const int &id, const double &x, const double &y) {
     if ( findVertex(id) != NULL)
         return false;
     vertexSet.push_back(new Vertex(id, x, y));
+    vertexMap.insert(make_pair(id, vertexSet.size() - 1));
     return true;
 }
 

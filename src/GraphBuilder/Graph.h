@@ -13,6 +13,7 @@
 #include "Edge.h"
 
 #include <unistd.h>
+#include <unordered_map>
 
 using namespace std;
 
@@ -25,10 +26,7 @@ class Graph {
     vector<vector<double>> dist;
     vector<vector<Vertex*> > pred;
 
-    double minX = std::numeric_limits<double>::max();
-    double minY = std::numeric_limits<double>::max();
-    double maxX = std::numeric_limits<double>::min();
-    double maxY = std::numeric_limits<double>::min();
+    unordered_map<int, int> vertexMap; //map para guardar a posição no vetor de cada nodeId
 
 public:
 	Vertex *findVertex(const int &id) const;
