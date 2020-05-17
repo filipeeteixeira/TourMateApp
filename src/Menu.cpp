@@ -252,6 +252,7 @@ void tourOptions(){
     do{
         clear();
         showTourOptions();
+        dataReader.setRealMaps(true);
         readInt(option, "Option");
         switch(option){
             case 1: {
@@ -328,6 +329,7 @@ void chooseGraphOptions() {
     do{
         clear();
         showGraphSelectionOptions();
+        dataReader.setRealMaps(false);
         readInt(option, "Option");
         switch(option){
             case 1:

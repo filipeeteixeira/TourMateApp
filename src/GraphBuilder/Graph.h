@@ -37,16 +37,6 @@ public:
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
-	double getmaxX() const;
-	double getmaxY() const;
-    double getminX() const;
-    double getminY() const;
-
-    void setmaxX(double maxX);
-    void setmaxY(double maxY);
-    void setminX(double minX);
-    void setminY(double minY);
-
 	/*
 	 *
 	//FP04 - search

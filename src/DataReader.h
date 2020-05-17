@@ -17,6 +17,8 @@ class DataReader {
     string edgesFilename;
     string tagsFilename;
 
+    bool realMaps;
+
     Graph graph;
     GraphViewer* graphViewer;
 
@@ -34,6 +36,8 @@ class DataReader {
         void readData(string city, string gridGraph);
 
         void setFiles(string city, string gridGraph);
+
+        void setRealMaps(bool rm);
 };
 
 

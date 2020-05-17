@@ -11,6 +11,7 @@ DataReader::DataReader(){
     nodesFilenameLatLon="";
     edgesFilename="";
     tagsFilename="";
+    realMaps=false;
 
     graphViewer = new GraphViewer(750, 750, false);
 }
@@ -37,20 +38,14 @@ void DataReader::readNodes() {
         getline(ssline,tmp,',');
         x=stof(tmp);
 
-        if (x<graph.getminX()){graph.setminX(x);}
-        if (x<graph.getmaxX()){graph.setmaxX(x);}
-
         getline(ssline,tmp,' ');
         getline(ssline,tmp,')');
         y=stof(tmp);
 
-        if (x<graph.getminY()){graph.setminY(y);}
-        if (x<graph.getmaxY()){graph.setmaxY(y);}
-
         graph.addVertex(nodeId, x, y);
     }
 
-    if(!nodesFilenameLatLon.empty()) { //para podermos testar com os GridGraphs
+    if(realMaps) { //para podermos testar com os GridGraphs
         ifstream nodesFile2(this->nodesFilenameLatLon);
         string line2;
         int totalNodes2, nodeId2;
@@ -103,8 +98,8 @@ void DataReader::readEdges() {
         getline(ssline,tmp,')');
         pointB=stoi(tmp);
 
-        if (!nodesFilenameLatLon.empty())
-            graph.addEdge(pointA,pointB,1); //weight between nodes
+        if (realMaps)
+            graph.addEdge(pointA,pointB, 1); //weight between nodes
         else
             graph.addEdge(pointA,pointB,1);
     }
@@ -149,7 +144,8 @@ void DataReader::displayGraph(int width, int height) {
         graphViewer->defineEdgeColor("black");
         graphViewer->defineEdgeCurved(false);
 
-        Vertex* currentVertex = new Vertex(0,0,0);
+        //codigo de um trabalho do ano passado-------------------------
+        Vertex* currentVertex;
         vector<Vertex*> vertexSet = graph.getVertexSet();
         int edgeID = 0;
         double offsetX = vertexSet.at(0)->getX();
@@ -173,6 +169,7 @@ void DataReader::displayGraph(int width, int height) {
         }
 
         graphViewer->rearrange();
+        //----------------------------------
     }
     else{
         cout << "There is no graph loaded! Load one in Load Graph menu." << endl;
@@ -185,13 +182,12 @@ void DataReader::readData(string city, string gridGraph) { //só para debug depo
     this->setFiles(city, gridGraph);
     this->readNodes();
     this->readEdges();
-
-    if(!city.empty())
+    if(realMaps)
         this->readTags();
 }
 
 void DataReader::setFiles(string city, string gridGraph){
-    if (!city.empty()) {
+    if (realMaps) {
         nodesFilenameXY = "../res/PortugalMaps/" + city + "/nodes_x_y_" + toLower(city) + ".txt";
         nodesFilenameLatLon = "../res/PortugalMaps/" + city + "/nodes_lat_lon_" + toLower(city) + ".txt";
         edgesFilename = "../res/PortugalMaps/" + city + "/edges_" + toLower(city) + ".txt";
@@ -202,4 +198,8 @@ void DataReader::setFiles(string city, string gridGraph){
         nodesFilenameLatLon = "";
         edgesFilename = "../res/GridGraphs/" + gridGraph + "/edges.txt";
     }
+}
+
+void DataReader::setRealMaps(bool rm) {
+    this->realMaps=rm;
 }
