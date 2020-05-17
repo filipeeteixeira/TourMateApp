@@ -252,11 +252,11 @@ void tourOptions(){
     do{
         clear();
         showTourOptions();
-        dataReader.setRealMaps(true);
         readInt(option, "Option");
         switch(option){
             case 1: {
                 string city;
+                dataReader.setRealMaps(true);
                 cout << "Select the city to make a tour" << endl;
                 askForCity(city);
 
@@ -329,22 +329,24 @@ void chooseGraphOptions() {
     do{
         clear();
         showGraphSelectionOptions();
-        dataReader.setRealMaps(false);
         readInt(option, "Option");
         switch(option){
             case 1:
+                dataReader.setRealMaps(false);
                 dataReader.readData("","4x4");
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
+                dataReader.setRealMaps(false);
                 dataReader.readData("","8x8");
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
+                dataReader.setRealMaps(false);
                 dataReader.readData("","16x16");
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";

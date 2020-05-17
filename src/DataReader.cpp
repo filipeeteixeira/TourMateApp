@@ -13,7 +13,7 @@ DataReader::DataReader(){
     tagsFilename="";
     realMaps=false;
 
-    graphViewer = new GraphViewer(750, 750, false);
+    graphViewer = nullptr;
 }
 
 void DataReader::readNodes() {
@@ -146,7 +146,7 @@ void DataReader::displayGraph(int width, int height) {
         graphViewer->defineEdgeCurved(false);
 
         if(realMaps) {
-            //codigo de um trabalho do ano passado-------------------------
+            //codigo de um trabalho do ano passado para fazer display a partir do x e y-------------------------
             Vertex *currentVertex;
             vector<Vertex *> vertexSet = graph.getVertexSet();
             int edgeID = 0;
@@ -171,6 +171,7 @@ void DataReader::displayGraph(int width, int height) {
                                      EdgeType::DIRECTED);
                 edgeID++;
             }
+            //--------------------------------------------------------------------
         }
         else{
             int edgeID = 0;
@@ -183,7 +184,7 @@ void DataReader::displayGraph(int width, int height) {
 
         }
         graphViewer->rearrange();
-        //----------------------------------
+
     }
     else{
         cout << "There is no graph loaded! Load one in Load Graph menu." << endl;
@@ -192,6 +193,7 @@ void DataReader::displayGraph(int width, int height) {
 }
 
 void DataReader::readData(string city, string gridGraph) { //só para debug depois fica só a cidade
+    graphViewer= new GraphViewer(750, 750, false);
     this->graph = Graph();
     this->setFiles(city, gridGraph);
     this->readNodes();
