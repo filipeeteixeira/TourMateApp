@@ -31,7 +31,7 @@ class Graph {
 public:
 	Vertex *findVertex(const int &id) const;
 	bool addVertex(const int &id, const double &x, const double &y);
-	bool addEdge(const int &sourc, const int &dest, double w);
+	bool addBidirectionalEdge(const int &sourc, const int &dest, double w);
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 

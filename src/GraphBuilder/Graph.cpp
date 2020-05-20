@@ -22,12 +22,13 @@ bool Graph::addVertex(const int &id, const double &x, const double &y) {
     return true;
 }
 
-bool Graph::addEdge(const int &sourc, const int &dest, double w) {
+bool Graph::addBidirectionalEdge(const int &sourc, const int &dest, double w) {
     auto v1 = findVertex(sourc);
     auto v2 = findVertex(dest);
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->addEdge(v2,w);
+    v2->addEdge(v1,w);
     return true;
 }
 
@@ -146,7 +147,7 @@ bool Graph::stronglyConnected() {
         for (size_t j = 0; j < vertexSet.at(i)->adj.size(); j++) {
             Gr.addVertex(vertexSet.at(i)->getAdj().at(j).getDest()->getId(), vertexSet.at(i)->getAdj().at(j).getDest()->getX(), vertexSet.at(i)->getAdj().at(j).getDest()->getY());
             Gr.addVertex(vertexSet.at(i)->getId(), vertexSet.at(i)->getX(), vertexSet.at(i)->getY());
-            Gr.addEdge(vertexSet.at(i)->getAdj().at(j).getDest()->getId(), vertexSet.at(i)->getId(), vertexSet.at(i)->adj.at(j).weight);
+            Gr.addBidirectionalEdge(vertexSet.at(i)->getAdj().at(j).getDest()->getId(), vertexSet.at(i)->getId(), vertexSet.at(i)->adj.at(j).weight);
         }
     }
 

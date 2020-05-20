@@ -100,9 +100,9 @@ void DataReader::readEdges() {
         pointB=stoi(tmp);
 
         if (realMaps)
-            graph.addEdge(pointA,pointB, 1); //weight between nodes
+            graph.addBidirectionalEdge(pointA,pointB, graph.findVertex(pointA)->distance(graph.findVertex(pointB))); //weight between nodes
         else
-            graph.addEdge(pointA,pointB,1);
+            graph.addBidirectionalEdge(pointA,pointB,1);
     }
 }
 
@@ -159,7 +159,7 @@ void DataReader::displayGraph(int width, int height) {
 
             for (size_t i = 0; i < vertexSet.size(); i++) {
                 currentVertex = vertexSet.at(i);
-                graphViewer->addNode(currentVertex->getId(), currentVertex->getX() - offsetX,
+                graphViewer->addNode(currentVertex->getId(), (int) currentVertex->getX() - offsetX,
                                      currentVertex->getY() - offsetY);
                 currentEdges = currentVertex->getAdj();
                 auxiliar_edges.insert(auxiliar_edges.end(), currentEdges.size(), *currentVertex);
@@ -190,11 +190,13 @@ void DataReader::displayGraph(int width, int height) {
         cout << "There is no graph loaded! Load one in Load Graph menu." << endl;
         sleep(2);
     }
+
 }
 
 void DataReader::readData(string city, string gridGraph) { //só para debug depois fica só a cidade
-    graphViewer= new GraphViewer(750, 750, false);
+    this->graphViewer= new GraphViewer(750, 750, false);
     this->graph = Graph();
+
     this->setFiles(city, gridGraph);
     this->readNodes();
     this->readEdges();
