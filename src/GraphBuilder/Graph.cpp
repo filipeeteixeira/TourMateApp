@@ -106,4 +106,51 @@ vector<int> Graph::getPath(const Vertex &origin, const Vertex &dest) const {
     return res;
 }
 
+vector<int> Graph::dfs() const {
+    vector<int> res;
+    for(auto vertex :vertexSet)
+        vertex->visited = false;
+    for (auto v : vertexSet)
+        if (!v->visited)
+            dfsVisit(v, res);
+    return res;
+}
 
+void Graph::dfsVisit(Vertex *v, vector<int> & res) const {
+    v->visited = true;
+    res.push_back(v->getId());
+    for(auto a: v->adj){
+        auto vert = a.dest;
+        if(!vert->visited) dfsVisit(vert,res);
+    }
+}
+
+/*
+ • Pesquisa em profundidade no grafo G determina floresta de expansão,
+numerando vértices em pós-ordem (ordem inversa de numeração em
+pré-ordem)
+• Inverter todas as arestas de G (grafo resultante é Gr)
+• Segunda pesquisa em profundidade, em Gr, começando sempre pelo
+vértice de numeração mais alta ainda não visitado
+• Cada árvore obtida é um componente fortemente conexo, i.e., a partir
+de um qualquer dos nós pode chegar-se a todos os outros
+ */
+
+bool Graph::stronglyConnected() {
+
+    vector<int> vec1 = dfs();
+
+    Graph Gr;
+
+    for (int i = 0; i < getNumVertex(); i++) {
+        for (size_t j = 0; j < vertexSet.at(i)->adj.size(); j++) {
+            Gr.addVertex(vertexSet.at(i)->getAdj().at(j).getDest()->getId(), vertexSet.at(i)->getAdj().at(j).getDest()->getX(), vertexSet.at(i)->getAdj().at(j).getDest()->getY());
+            Gr.addVertex(vertexSet.at(i)->getId(), vertexSet.at(i)->getX(), vertexSet.at(i)->getY());
+            Gr.addEdge(vertexSet.at(i)->getAdj().at(j).getDest()->getId(), vertexSet.at(i)->getId(), vertexSet.at(i)->adj.at(j).weight);
+        }
+    }
+
+    vector<int> vec2 = Gr.dfs();
+
+    return !((int) vec1.size() != getNumVertex() || (int) vec2.size() != getNumVertex());
+}

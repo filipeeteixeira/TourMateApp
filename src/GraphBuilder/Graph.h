@@ -39,6 +39,8 @@ public:
     bool relax(Vertex *v, Vertex *w, double weight);
     void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
     vector<int> getPath(const Vertex &origin, const Vertex &dest) const;
+    vector<int> dfs() const;
+    bool stronglyConnected();
     /*
      *
     //FP04 - search
@@ -56,6 +58,7 @@ public:
     vector<T> getfloydWarshallPath(const T &origin, const T &dest) const;   //TODO...
 */
 
+    void dfsVisit(Vertex *v, vector<int> &res) const;
 };
 
 /**************** Search algorithm ************/
