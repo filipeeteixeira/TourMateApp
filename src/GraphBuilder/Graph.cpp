@@ -50,7 +50,7 @@ vector<Vertex *> Graph::getVertexSet() const {
 Vertex * Graph::initSingleSource(const int &origin) {
     for (auto v : vertexSet) {
         v->dist = INF;
-        v->path = nullptr;
+        v->paths[0] = NULL;
     }
     auto s = findVertex(origin);
     s->dist = 0;
@@ -64,7 +64,7 @@ Vertex * Graph::initSingleSource(const int &origin) {
 bool Graph::relax(Vertex *v, Vertex *w, double weight) {
     if (v->dist + weight < w->dist) {
         w->dist = v->dist + weight;
-        w->path = v;
+        w->paths.push_back(v);
         return true;
     }
     else
@@ -94,17 +94,6 @@ void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
             }
         }
     }
-}
-
-vector<int> Graph::getPath(const Vertex &origin, const Vertex &dest) const {
-    vector<int> res;
-    auto v = findVertex(dest.getId());
-    if (v == nullptr || v->dist == INF)
-        return res;
-    for ( ; v != nullptr; v = v->path)
-        res.push_back(v->getId());
-    reverse(res.begin(), res.end());
-    return res;
 }
 
 vector<int> Graph::dfs() const {
@@ -155,3 +144,48 @@ bool Graph::stronglyConnected() {
 
     return !((int) vec1.size() != getNumVertex() || (int) vec2.size() != getNumVertex());
 }
+
+Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
+    Vertex* path;
+    origin->visited = true;
+    if(origin == dest)
+        return dest;
+    else {
+        for(auto a: origin->adj){
+            auto vert = a.dest;
+            if(!vert->visited){
+                path = dfsAllPaths(vert, dest);
+                if(path != NULL)
+                    origin->paths.push_back(path);
+            }
+        }
+    }
+    return NULL; // This return value won't be used for anything
+}
+
+void Graph::dfsAllPathsVisit(Vertex* origin, Vertex* dest) {
+    for(auto vertex : vertexSet)
+        vertex->setVisited(false);
+    dfsAllPaths(origin, dest);
+}
+
+void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
+
+    static int i = 0;
+
+    if(dest->paths[i] == NULL)
+        return;
+
+    if(origin == dest)
+        i++;
+    else
+        {
+        cout << origin->paths[i] <<"->";
+        printAllPaths(origin->paths[i], dest);
+    }
+
+    if(i < origin->paths.size())
+        printAllPaths(origin, dest);
+}
+
+

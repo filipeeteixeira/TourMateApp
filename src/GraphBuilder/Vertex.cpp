@@ -52,14 +52,6 @@ bool Vertex::operator==(const Vertex &rhs) const {
     return id==rhs.id;
 }
 
-Vertex* Vertex::getPath() const{
-    return path;
-}
-
-void Vertex::setPath(Vertex* v) {
-    path = v;
-}
-
 vector<Edge> Vertex::getAdj() const{
     return adj;
 }
