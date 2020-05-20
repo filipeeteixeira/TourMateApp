@@ -11,6 +11,8 @@
 
 using namespace std;
 
+enum Transport {onFoot, car, bus};
+
 class DataReader {
     string nodesFilenameXY;
     string nodesFilenameLatLon;
@@ -23,7 +25,7 @@ class DataReader {
     GraphViewer* graphViewer;
 
     void readNodes();
-    void readEdges();
+    void readEdges(Transport transport);
     void readTags();
 
     public:
@@ -33,7 +35,7 @@ class DataReader {
 
         void displayGraph(int width, int height);
 
-        void readData(string city, string gridGraph);
+        void readData(string city, string gridGraph, Transport transport);
 
         void setFiles(string city, string gridGraph);
 
