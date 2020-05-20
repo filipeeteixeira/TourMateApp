@@ -148,39 +148,48 @@ bool Graph::stronglyConnected() {
 Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
     Vertex* path;
     origin->visited = true;
-    if(origin == dest)
+    if(origin == dest){
         return dest;
+    }
     else {
         for(auto a: origin->adj){
             auto vert = a.dest;
             if(!vert->visited){
                 path = dfsAllPaths(vert, dest);
-                if(path != NULL)
-                    origin->paths.push_back(path);
+                if(path != NULL){
+                    if(path != dest)
+                        for(int i = 0; i < path->paths.size(); i++)
+                            origin->paths.push_back(path);
+                    else
+                        origin->paths.push_back(path);
+                }
+
             }
         }
     }
-    return NULL; // This return value won't be used for anything
+    return origin; // This return value won't be used for anything
 }
 
-void Graph::dfsAllPathsVisit(Vertex* origin, Vertex* dest) {
+void Graph::dfsAllPathsVisit(const int origin, const int dest) {
+    Vertex* originV = findVertex(origin);
+    Vertex* destV = findVertex(dest);
     for(auto vertex : vertexSet)
         vertex->setVisited(false);
-    dfsAllPaths(origin, dest);
+    dfsAllPaths(originV, destV);
+    printAllPaths(originV, destV);
 }
 
 void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
 
     static int i = 0;
 
-    if(dest->paths[i] == NULL)
-        return;
-
-    if(origin == dest)
+    if(origin == dest){
+        cout << origin->getId() << endl;
         i++;
+    }
     else
         {
-        cout << origin->paths[i] <<"->";
+        cout << origin->getId() <<"->";
         printAllPaths(origin->paths[i], dest);
     }
 
