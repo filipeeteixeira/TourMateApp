@@ -267,10 +267,10 @@ void tourOptions(){
                 cout << "Graph loaded." << endl;
                 Graph g = dataReader.getGraph();
                 if(g.stronglyConnected())
-                    cout << "Graph Strongly Connected: " << "No" << endl;
-                else
                     cout << "Graph Strongly Connected: " << "Yes" << endl;
-
+                else
+                    cout << "Graph Strongly Connected: " << "No" << endl;
+                dataReader.displayGraph(750, 750);
                 Vertex *sv, *dv;
                 do{
                     unsigned int src, dest;
