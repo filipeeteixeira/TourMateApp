@@ -7,12 +7,22 @@
 #include "DataReader.h"
 
 DataReader::DataReader(){
+    this->width = 950;
+    this->height = 500;
+
     nodesFilenameXY="";
     nodesFilenameLatLon="";
     edgesFilename="";
     tagsFilename="";
+
     realMaps=false;
+
     graphViewer = nullptr;
+
+    minX = std::numeric_limits<double>::max();
+    minY = std::numeric_limits<double>::max();
+    maxX = std::numeric_limits<double>::min();
+    maxY = std::numeric_limits<double>::min();
 }
 
 void DataReader::readNodes() {
@@ -33,13 +43,18 @@ void DataReader::readNodes() {
         getline(ssline, tmp, ',');
         nodeId=stoi(tmp);
 
-        getline(ssline,tmp,' ');
         getline(ssline,tmp,',');
-        x=stof(tmp);
+        x=stod(tmp);
 
-        getline(ssline,tmp,' ');
         getline(ssline,tmp,')');
-        y=stof(tmp);
+        y=stod(tmp);
+
+        if (realMaps) {
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+        }
 
         graph.addVertex(nodeId, x, y);
 
@@ -61,13 +76,11 @@ void DataReader::readNodes() {
             getline(ssline, tmp, ',');
             nodeId2 = stoi(tmp);
 
-            getline(ssline, tmp, ' ');
             getline(ssline, tmp, ',');
-            lat = stof(tmp);
+            lat = stod(tmp);
 
-            getline(ssline, tmp, ' ');
             getline(ssline, tmp, ')');
-            lon = stof(tmp);
+            lon = stod(tmp);
 
             Vertex *tmpGraph = graph.findVertex(nodeId2);
             tmpGraph->setLat(lat);
@@ -94,7 +107,6 @@ void DataReader::readEdges(Transport transport) {
         getline(ssline, tmp, ',');
         pointA=stoi(tmp);
 
-        getline(ssline,tmp,' ');
         getline(ssline,tmp,')');
         pointB=stoi(tmp);
 
@@ -151,7 +163,12 @@ Graph DataReader::getGraph() {
     return graph;
 }
 
-void DataReader::displayGraph(int width, int height) {
+GraphViewer * DataReader::getGraphViewer() {
+    return graphViewer;
+}
+
+void DataReader::displayGraph() {
+    this->graphViewer= new GraphViewer(width, height, false);
     if(!nodesFilenameXY.empty()) {
         graphViewer->createWindow(width, height);
         graphViewer->defineVertexColor("black");
@@ -159,34 +176,25 @@ void DataReader::displayGraph(int width, int height) {
         graphViewer->defineEdgeCurved(false);
 
         if(realMaps) {
-            //codigo de um trabalho do ano passado para fazer display a partir do x e y-------------------------
-            Vertex *currentVertex;
-            vector<Vertex *> vertexSet = graph.getVertexSet();
-            int edgeID = 0;
-            double offsetX = vertexSet.at(0)->getX();
-            double offsetY = vertexSet.at(0)->getY();
-
-            vector<Edge> edges;
-            vector<Vertex> auxiliar_edges;
-            vector<Edge> currentEdges;
-
-            for (size_t i = 0; i < vertexSet.size(); i++) {
-                currentVertex = vertexSet.at(i);
-                graphViewer->addNode(currentVertex->getId(), (int) currentVertex->getX() - offsetX,
-                                     currentVertex->getY() - offsetY);
-                currentEdges = currentVertex->getAdj();
-                auxiliar_edges.insert(auxiliar_edges.end(), currentEdges.size(), *currentVertex);
-                edges.insert(edges.end(), currentEdges.begin(), currentEdges.end());
+            double yPercent, xPercent;
+            for (Vertex* vertex : graph.getVertexSet()) {
+                yPercent =(vertex->getY() - minY)/(maxY - minY);
+                xPercent = (vertex->getX() - minX)/(maxX - minX);
+                graphViewer->addNode(vertex->getId(), (int)(xPercent*width), (int)(yPercent*height));
+                graphViewer->setVertexSize(vertex->getId(), 5);
             }
 
-            for (size_t i = 0; i < edges.size(); i++) {
-                graphViewer->addEdge(edgeID, auxiliar_edges[i].getId(), edges[i].getDest()->getId(),
-                                     EdgeType::DIRECTED);
-                edgeID++;
+            int id = 0;
+            for (Vertex* vertex : graph.getVertexSet()) {
+                for (Edge edge : vertex->getAdj()) {
+                    graphViewer->addEdge(id, vertex->getId(), edge.getDest()->getId(), EdgeType::UNDIRECTED);
+                    graphViewer->setEdgeLabel(id, "");
+                    id++;
+                }
             }
-            //--------------------------------------------------------------------
+            graphViewer->rearrange();
         }
-        else{
+        else{ //grid maps
             int edgeID = 0;
             for (auto vertex : this->graph.getVertexSet()) {
                 graphViewer->addNode(vertex->getId(), vertex->getX(), vertex->getY());
@@ -203,26 +211,30 @@ void DataReader::displayGraph(int width, int height) {
         cout << "There is no graph loaded! Load one in Load Graph menu." << endl;
         sleep(2);
     }
-
+    //delete graphViewer;
 }
 
 void DataReader::readData(string city, string gridGraph, Transport transport) { //só para debug depois fica só a cidade
-    this->graphViewer= new GraphViewer(750, 750, false);
     this->graph = Graph();
 
     this->setFiles(city, gridGraph);
     this->readNodes();
-    this->readEdges(transport);
+    this->readEdges(Transport transport);
     if(realMaps)
         this->readTags();
 }
 
 void DataReader::setFiles(string city, string gridGraph){
     if (realMaps) {
-        nodesFilenameXY = "../res/PortugalMaps/" + city + "/nodes_x_y_" + toLower(city) + ".txt";
+        /*nodesFilenameXY = "../res/PortugalMaps/" + city + "/nodes_x_y_" + toLower(city) + ".txt";
         nodesFilenameLatLon = "../res/PortugalMaps/" + city + "/nodes_lat_lon_" + toLower(city) + ".txt";
         edgesFilename = "../res/PortugalMaps/" + city + "/edges_" + toLower(city) + ".txt";
-        tagsFilename = "../res/TagExamples/" + city + "/t03_tags_" + toLower(city) + ".txt";
+        tagsFilename = "../res/TagExamples/" + city + "/t03_tags_" + toLower(city) + ".txt";*/
+
+        nodesFilenameXY = "../res/NewMaps/Porto/porto_strong_nodes_xy.txt";
+        nodesFilenameLatLon = "../res/NewMaps/Porto/porto_strong_nodes_latlng.txt";
+        edgesFilename = "../res/NewMaps/Porto/porto_strong_edges.txt";
+        tagsFilename = "../res/NewMaps/Porto/porto_tags.txt";
     }
     else{
         nodesFilenameXY = "../res/GridGraphs/" + gridGraph + "/nodes.txt";

@@ -1,7 +1,3 @@
-//
-// Created by filip on 10/05/2020.
-//
-
 #ifndef TOURMATEAPP_DATAREADER_H
 #define TOURMATEAPP_DATAREADER_H
 
@@ -18,11 +14,14 @@ class DataReader {
     string nodesFilenameLatLon;
     string edgesFilename;
     string tagsFilename;
+    int width,height;
 
     bool realMaps;
 
     Graph graph;
     GraphViewer* graphViewer;
+
+    double maxX,maxY,minX,minY;
 
     void readNodes();
     void readEdges(Transport transport);
@@ -33,14 +32,13 @@ class DataReader {
 
         Graph getGraph();
 
-        void displayGraph(int width, int height);
+        void displayGraph();
 
         void readData(string city, string gridGraph, Transport transport);
 
         void setFiles(string city, string gridGraph);
 
         void setRealMaps(bool rm);
+
+        GraphViewer * getGraphViewer();
 };
-
-
-#endif //TOURMATEAPP_DATAREADER_H

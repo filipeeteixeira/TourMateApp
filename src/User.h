@@ -7,6 +7,7 @@
 
 #include <string>
 #include <list>
+#include "GraphBuilder/Vertex.h"
 
 using namespace std;
 
@@ -20,11 +21,20 @@ public:
     void setAge(int newAge);
     list<string> getPreferences() const;
     unsigned int getAvailableTime() const;
+
+    Vertex * getUserSP();
+    Vertex * getUserEP();
+
+    void setUserSP(Vertex * sp);
+    void setUserEP(Vertex * ep);
+
 private:
     list<string> preferences;
     string name;
     unsigned int age;
     unsigned int availableTime;
+    Vertex * startPoint;
+    Vertex * endPoint;
 };
 
 

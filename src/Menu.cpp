@@ -1,3 +1,4 @@
+
 //
 // Created by breno on 5/12/2020.
 //
@@ -92,47 +93,47 @@ void choosePreferences() {
                 getchar();
                 break;
             case 9:
-                user.addPreference("Museum");
+                user.addPreference("museum");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 8:
-                user.addPreference("Camp Site");
+                user.addPreference("camp_site");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 7:
-                user.addPreference("Artwork");
+                user.addPreference("artwork");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 6:
-                user.addPreference("Picnic Site");
+                user.addPreference("picnic_site");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 5:
-                user.addPreference("Guest House");
+                user.addPreference("guest_house");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 4:
-                user.addPreference("View Point");
+                user.addPreference("view_point");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
-                user.addPreference("Attraction");
+                user.addPreference("attraction");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
-                user.addPreference("Hotel");
+                user.addPreference("hotel");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 1:
-                user.addPreference("Information");
+                user.addPreference("information");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
@@ -243,6 +244,58 @@ void askForCity(string &city) {
     }while(true);
 }
 
+void showTagsOptions(){
+    cout << "TAG OPTIONS: " << endl;
+    cout << "   [1] Generic" << endl;
+    cout << "   [2] Museum" << endl;
+    cout << "   [3] Camp site" << endl;
+    cout << "   [4] Artwork" << endl;
+    cout << "   [5] Picnic Site" << endl;
+    cout << "   [6] Guest House" << endl;
+    cout << "   [7] ViewPoint" << endl;
+    cout << "   [8] Attraction" << endl;
+    cout << "   [9] Information" << endl;
+    cout << "   [10] Hotel" << endl;
+}
+
+string chooseTag(string msg) {
+    unsigned int option;
+
+    do{
+        clear();
+        showTagsOptions();
+        readInt(option, msg);
+        switch(option){
+            case 1:
+                return "*";
+            case 2:
+                return "museum";
+            case 3:
+                return "camp_site";
+            case 4:
+                return "artwork";
+            case 5:
+                return "picnic_site";
+            case 6:
+                return "guest_house";
+            case 7:
+                return "view_point";
+            case 8:
+                return "attraction";
+            case 9:
+                return "information";
+            case 10:
+                return "hotel";
+            default:
+                cout << "Invalid option..." << endl;
+                cout << "Press any key to continue ...";
+                getchar();
+                break;
+        }
+
+    }while(true);
+}
+
 void showTourOptions(){
     cout << "TOUR OPTIONS: " << endl;
     cout << "   [1] New Tour" << endl;
@@ -263,28 +316,17 @@ void tourOptions(){
                 askForCity(city);
 
                 cout << "Loading city graph..." << endl;
-                dataReader.readData(city, "", onFoot);
+                dataReader.readData(city, "",onFoot);
                 cout << "Graph loaded." << endl;
+
                 Graph g = dataReader.getGraph();
                 if(g.stronglyConnected())
-                    cout << "Graph Strongly Connected: " << "No" << endl;
-                else
                     cout << "Graph Strongly Connected: " << "Yes" << endl;
+                else
+                    cout << "Graph Strongly Connected: " << "No" << endl;
 
-                Vertex *sv, *dv;
-                do{
-                    unsigned int src, dest;
-                    readInt(src, "Select origin ID");
-                    readInt(dest, "Select destination ID");
-
-                    sv = dataReader.getGraph().findVertex(src);
-                    dv = dataReader.getGraph().findVertex(dest);
-                    if(dataReader.getGraph().findVertex(src)!=nullptr && dataReader.getGraph().findVertex(dest)!=nullptr)
-                        break;
-                    cout << "Invalid path." << endl;
-                }while(true);
-
-
+                getStartPoint(user, dataReader,chooseTag("Where are you"));
+                getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
 
                 cout << "Press any key to continue ...";
                 getchar();
@@ -319,7 +361,7 @@ void graphOptions(){
 
         switch(option){
             case 1:
-                dataReader.displayGraph(750,750);
+                dataReader.displayGraph();
                 break;
             case 2:
                 chooseGraphOptions();
@@ -355,21 +397,21 @@ void chooseGraphOptions() {
         switch(option){
             case 1:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","4x4", onFoot);
+                dataReader.readData("","4x4",onFoot);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","8x8", onFoot);
+                dataReader.readData("","8x8",onFoot);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","16x16", onFoot);
+                dataReader.readData("","16x16",onFoot);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
@@ -385,4 +427,3 @@ void chooseGraphOptions() {
 
     }while(true);
 }
-
