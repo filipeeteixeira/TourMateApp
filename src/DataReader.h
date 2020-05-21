@@ -16,6 +16,7 @@ class DataReader {
     string nodesFilenameLatLon;
     string edgesFilename;
     string tagsFilename;
+    int width,height;
 
     bool realMaps;
 
@@ -33,7 +34,7 @@ class DataReader {
 
         Graph getGraph();
 
-        void displayGraph(int width, int height);
+        void displayGraph();
 
         void readData(string city, string gridGraph);
 

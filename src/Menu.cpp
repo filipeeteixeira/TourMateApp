@@ -257,13 +257,13 @@ void showTagsOptions(){
     cout << "   [10] Hotel" << endl;
 }
 
-string chooseTag() {
+string chooseTag(string msg) {
     unsigned int option;
 
     do{
         clear();
         showTagsOptions();
-        readInt(option, "Where are you");
+        readInt(option, msg);
         switch(option){
             case 1:
                 return "*";
@@ -324,7 +324,8 @@ void tourOptions(){
                 else
                     cout << "Graph Strongly Connected: " << "No" << endl;
 
-                //getStartPoint(user, dataReader,chooseTag());
+                getStartPoint(user, dataReader,chooseTag("Where are you"));
+                getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
 
                 cout << "Press any key to continue ...";
                 getchar();
@@ -359,7 +360,7 @@ void graphOptions(){
 
         switch(option){
             case 1:
-                dataReader.displayGraph(1900,1000);
+                dataReader.displayGraph();
                 break;
             case 2:
                 chooseGraphOptions();

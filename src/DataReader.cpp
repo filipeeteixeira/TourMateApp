@@ -7,10 +7,14 @@
 #include "DataReader.h"
 
 DataReader::DataReader(){
+    this->width = 950;
+    this->height = 500;
+
     nodesFilenameXY="";
     nodesFilenameLatLon="";
     edgesFilename="";
     tagsFilename="";
+
     realMaps=false;
 
     graphViewer = nullptr;
@@ -149,7 +153,7 @@ GraphViewer * DataReader::getGraphViewer() {
     return graphViewer;
 }
 
-void DataReader::displayGraph(int width, int height) {
+void DataReader::displayGraph() {
     this->graphViewer= new GraphViewer(width, height, false);
     if(!nodesFilenameXY.empty()) {
         graphViewer->createWindow(width, height);
@@ -170,7 +174,7 @@ void DataReader::displayGraph(int width, int height) {
             for (Vertex* vertex : graph.getVertexSet()) {
                 for (Edge edge : vertex->getAdj()) {
                     graphViewer->addEdge(id, vertex->getId(), edge.getDest()->getId(), EdgeType::UNDIRECTED);
-                    graphViewer->setEdgeLabel(id, ""/*to_string(edge->getWeight())*/);
+                    graphViewer->setEdgeLabel(id, "");
                     id++;
                 }
             }
@@ -193,9 +197,7 @@ void DataReader::displayGraph(int width, int height) {
         cout << "There is no graph loaded! Load one in Load Graph menu." << endl;
         sleep(2);
     }
-    getchar();
-    delete graphViewer;
-
+    //delete graphViewer;
 }
 
 void DataReader::readData(string city, string gridGraph) { //só para debug depois fica só a cidade

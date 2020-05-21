@@ -11,7 +11,8 @@
 
 void showTags(GraphViewer* gv, const vector<Vertex*>& vertexes);
 
-void getStartPoint(User user, DataReader dataReader, string startTag);
+void getStartPoint(User &user, DataReader &dataReader, string startTag);
 
+void getEndPoint(User &user, DataReader &dataReader, string endTag);
 
 #endif //TOURMATEAPP_USERUTILS_H

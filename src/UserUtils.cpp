@@ -7,15 +7,15 @@
 void showTags(GraphViewer* gv, const vector<Vertex*>& vertexes) {
     for(int i = 0; i < vertexes.size(); i++) {
         gv->setVertexColor(vertexes.at(i)->getId(), "yellow");
-        gv->setVertexLabel(vertexes.at(i)->getId(), to_string(i+1));
-        gv->setVertexSize(vertexes.at(i)->getId(), 40);
+        gv->setVertexLabel(vertexes.at(i)->getId(), to_string(i));
+        gv->setVertexSize(vertexes.at(i)->getId(), 30);
     }
 
     gv->rearrange();
 }
 
-void getStartPoint(User user, DataReader dataReader, string startTag) {
-    dataReader.displayGraph(1900,1000);
+void getStartPoint(User &user, DataReader &dataReader, string startTag) {
+    dataReader.displayGraph();
 
     vector<Vertex*> tags;
     for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
@@ -35,6 +35,36 @@ void getStartPoint(User user, DataReader dataReader, string startTag) {
     }while(true);
 
     dataReader.getGraphViewer()->closeWindow();
-    user.setUserSP(dataReader.getGraph().findVertex(startPoint));
+    user.setUserSP(tags.at(startPoint));
+    cout << user.getUserSP()->getId()<< endl;
+    //delete dataReader.getGraphViewer();
 }
 
+void getEndPoint(User &user, DataReader &dataReader, string endTag) {
+    dataReader.displayGraph();
+    cout << user.getUserSP()->getId()<< endl;
+    dataReader.getGraphViewer()->setVertexColor(user.getUserSP()->getId(),"green");
+    dataReader.getGraphViewer()->setVertexSize(user.getUserSP()->getId(),30);
+    dataReader.getGraphViewer()->setVertexLabel(user.getUserSP()->getId(),"START");
+
+    vector<Vertex*> tags;
+    for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
+        if(vertex->getTag() == endTag)
+            tags.push_back(vertex);
+    }
+
+    showTags(dataReader.getGraphViewer(), tags);
+
+
+    unsigned int endPoint;
+    do{
+        readInt(endPoint,"What is your end point id");
+
+        if(endPoint<=tags.size() && endPoint>=1)
+            break;
+        cout << "Invalid point." << endl;
+    }while(true);
+
+    dataReader.getGraphViewer()->closeWindow();
+    user.setUserEP(tags.at(endPoint));
+}
