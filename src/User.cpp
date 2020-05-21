@@ -39,3 +39,19 @@ void User::setAge(int newAge) {
 unsigned int User::getAvailableTime() const {
     return availableTime;
 }
+
+Vertex * User::getUserSP(){
+    return startPoint;
+}
+
+Vertex * User::getUserEP(){
+    return endPoint;
+}
+
+void User::setUserEP(Vertex * ep) {
+    this->endPoint=ep;
+}
+
+void User::setUserSP(Vertex * sp) {
+    this->startPoint=sp;
+}

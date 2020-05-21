@@ -12,6 +12,7 @@
 #include "GraphBuilder/Vertex.h"
 #include "GraphBuilder/Edge.h"
 #include "User.h"
+#include "UserUtils.h"
 
 void menu();
 void showMainMenu();

@@ -22,6 +22,8 @@ class DataReader {
     Graph graph;
     GraphViewer* graphViewer;
 
+    double maxX,maxY,minX,minY;
+
     void readNodes();
     void readEdges();
     void readTags();
@@ -38,6 +40,8 @@ class DataReader {
         void setFiles(string city, string gridGraph);
 
         void setRealMaps(bool rm);
+
+        GraphViewer * getGraphViewer();
 };
 
 
