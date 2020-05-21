@@ -28,6 +28,7 @@ class Vertex {
     double dist = 0;
     vector<Edge> adj;		// outgoing edges
     vector<Vertex *>paths;
+    vector<int>time;
     int queueIndex = 0; 		// required by MutablePriorityQueue
     void addEdge(Vertex *dest, double w);
 public:

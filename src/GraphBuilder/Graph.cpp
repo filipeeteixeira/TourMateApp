@@ -146,24 +146,34 @@ bool Graph::stronglyConnected() {
 }
 
 Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
+    static int time;
+
     Vertex* path;
     origin->visited = true;
     if(origin == dest){
+        origin->time.push_back(time);
+        time -= 2;
         return dest;
     }
     else {
-        for(auto a: origin->adj){
+        for(auto a: origin->adj) {
             auto vert = a.dest;
-            if(!vert->visited){
+            time += 2;
+            if(time<=16)
                 path = dfsAllPaths(vert, dest);
-                if(path != NULL){
-                    if(path != dest)
-                        for(int i = 0; i < path->paths.size(); i++)
-                            origin->paths.push_back(path);
-                    else
+            else
+                return NULL;
+            time -= 2;
+            if (path != NULL) {
+                if (path != dest)
+                    for (int i = 0; i < path->paths.size(); i++) {
+                        origin->time.push_back(time);
                         origin->paths.push_back(path);
+                    }
+                else{
+                    origin->time.push_back(time);
+                    origin->paths.push_back(path);
                 }
-
             }
         }
     }
