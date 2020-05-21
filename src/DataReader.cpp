@@ -219,7 +219,7 @@ void DataReader::readData(string city, string gridGraph, Transport transport) { 
 
     this->setFiles(city, gridGraph);
     this->readNodes();
-    this->readEdges(Transport transport);
+    this->readEdges(transport);
     if(realMaps)
         this->readTags();
 }

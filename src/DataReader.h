@@ -42,3 +42,5 @@ class DataReader {
 
         GraphViewer * getGraphViewer();
 };
+
+#endif //TOURMATEAPP_DATAREADER_H
