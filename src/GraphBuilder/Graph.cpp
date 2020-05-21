@@ -262,7 +262,7 @@ double Graph::getPathTime(vector<int> path){
 
 // utility function for finding paths in graph
 // from source to destination
-vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id)
+vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
 {
     // create a queue which stores
     // the paths
@@ -285,7 +285,7 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id)
             paths.push_back(path);
         }
 
-        if(getPathTime(path) > 5.0){
+        if(getPathTime(path) > maxTime){
             continue;
         }
 

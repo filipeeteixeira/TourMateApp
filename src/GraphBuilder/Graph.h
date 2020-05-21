@@ -62,7 +62,7 @@ public:
 
     void dfsVisit(Vertex *v, vector<int> &res) const;
 
-    vector<vector<int>> BFS_Paths(int src_id, int dest_id);
+    vector<vector<int>> BFS_Paths(int src_id, int dest_id, double maxTime);
 
     double getPathTime(vector<int> path);
 };

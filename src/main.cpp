@@ -4,9 +4,10 @@
 
 int main() {
     DataReader dataReader;
-    dataReader.readData("","4x4", onFoot);
+    dataReader.readData("","16x16", onFoot);
     dataReader.displayGraph();
-    dataReader.getGraph().BFS_Paths(0, 1);
+    dataReader.getGraph().BFS_Paths(5, 34, 10);
+    getchar();
     //dataReader.getGraph().dfsAllPathsVisit(0, 1);
     //menu();
 
