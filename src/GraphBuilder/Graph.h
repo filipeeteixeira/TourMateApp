@@ -35,10 +35,12 @@ public:
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
+	Vertex* dfsAllPaths(Vertex* origin, Vertex* dest);
+    void dfsAllPathsVisit(const int origin, const int dest);
+	void printAllPaths(Vertex* origin, Vertex* dest);
     Vertex *initSingleSource(const int &origin);
     bool relax(Vertex *v, Vertex *w, double weight);
     void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
-    vector<int> getPath(const Vertex &origin, const Vertex &dest) const;
     vector<int> dfs() const;
     bool stronglyConnected();
     /*

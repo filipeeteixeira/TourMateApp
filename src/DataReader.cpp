@@ -89,7 +89,7 @@ void DataReader::readNodes() {
     }
 }
 
-void DataReader::readEdges() {
+void DataReader::readEdges(Transport transport) {
     ifstream edgesFile(this->edgesFilename);
 
     string line;
@@ -110,8 +110,22 @@ void DataReader::readEdges() {
         getline(ssline,tmp,')');
         pointB=stoi(tmp);
 
-        if (realMaps)
-            graph.addBidirectionalEdge(pointA,pointB, graph.findVertex(pointA)->distance(graph.findVertex(pointB))); //weight between nodes
+        if (realMaps) {
+            switch (transport) {
+                case onFoot:
+                    graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
+                    graph.findVertex(pointB)) / 4.5); //weight between nodes
+                    break;
+                case car:
+                    graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
+                            graph.findVertex(pointB)) / 50.0);
+                    break;
+                case bus:
+                    graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
+                            graph.findVertex(pointB)) / 16.0);
+                    break;
+            }
+        }
         else
             graph.addBidirectionalEdge(pointA,pointB,1);
     }
@@ -200,12 +214,12 @@ void DataReader::displayGraph() {
     //delete graphViewer;
 }
 
-void DataReader::readData(string city, string gridGraph) { //só para debug depois fica só a cidade
+void DataReader::readData(string city, string gridGraph, Transport transport) { //só para debug depois fica só a cidade
     this->graph = Graph();
 
     this->setFiles(city, gridGraph);
     this->readNodes();
-    this->readEdges();
+    this->readEdges(Transport transport);
     if(realMaps)
         this->readTags();
 }

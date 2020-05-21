@@ -1,7 +1,3 @@
-//
-// Created by filip on 10/05/2020.
-//
-
 #ifndef TOURMATEAPP_DATAREADER_H
 #define TOURMATEAPP_DATAREADER_H
 
@@ -10,6 +6,8 @@
 #include "GraphBuilder/Graph.h"
 
 using namespace std;
+
+enum Transport {onFoot, car, bus};
 
 class DataReader {
     string nodesFilenameXY;
@@ -26,7 +24,7 @@ class DataReader {
     double maxX,maxY,minX,minY;
 
     void readNodes();
-    void readEdges();
+    void readEdges(Transport transport);
     void readTags();
 
     public:
@@ -36,7 +34,7 @@ class DataReader {
 
         void displayGraph();
 
-        void readData(string city, string gridGraph);
+        void readData(string city, string gridGraph, Transport transport);
 
         void setFiles(string city, string gridGraph);
 
@@ -44,6 +42,3 @@ class DataReader {
 
         GraphViewer * getGraphViewer();
 };
-
-
-#endif //TOURMATEAPP_DATAREADER_H

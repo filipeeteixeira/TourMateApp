@@ -3,7 +3,11 @@
 #include "Menu.h"
 
 int main() {
-    menu();
+    DataReader dataReader;
+    dataReader.readData("","4x4", onFoot);
+    dataReader.getGraph().dfsAllPathsVisit(0, 1);
+    //menu();
+
     return 0;
 }
 

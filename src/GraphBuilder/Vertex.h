@@ -27,7 +27,8 @@ class Vertex {
 
     double dist = 0;
     vector<Edge> adj;		// outgoing edges
-    Vertex *path = nullptr;
+    vector<Vertex *>paths;
+    vector<int>time;
     int queueIndex = 0; 		// required by MutablePriorityQueue
     void addEdge(Vertex *dest, double w);
 public:
@@ -65,10 +66,6 @@ public:
     bool getVisited() const;
 
     void setVisited(bool visited);
-
-    Vertex* getPath() const;
-
-    void setPath(Vertex* v);
 
     vector<Edge> getAdj() const;
 

@@ -1,3 +1,4 @@
+
 //
 // Created by breno on 5/12/2020.
 //
@@ -315,7 +316,7 @@ void tourOptions(){
                 askForCity(city);
 
                 cout << "Loading city graph..." << endl;
-                dataReader.readData(city, "");
+                dataReader.readData(city, "",onFoot);
                 cout << "Graph loaded." << endl;
 
                 Graph g = dataReader.getGraph();
@@ -396,21 +397,21 @@ void chooseGraphOptions() {
         switch(option){
             case 1:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","4x4");
+                dataReader.readData("","4x4",onFoot);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","8x8");
+                dataReader.readData("","8x8",onFoot);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","16x16");
+                dataReader.readData("","16x16",onFoot);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
@@ -426,4 +427,3 @@ void chooseGraphOptions() {
 
     }while(true);
 }
-
