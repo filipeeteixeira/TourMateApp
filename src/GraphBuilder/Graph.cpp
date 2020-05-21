@@ -207,4 +207,100 @@ void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
         printAllPaths(origin, dest);
 }
 
+//-------------------------------------------------------
+// utility function for printing
+// the found path in graph
+void printpath(vector<int>& path)
+{
+    int size = path.size();
+    for (int i = 0; i < size; i++)
+        cout << path[i] << " ";
+    cout << endl;
+}
+
+// utility function to check if current
+// vertex is already present in path
+int isNotVisited(int x, vector<int>& path)
+{
+    int size = path.size();
+    for (int i = 0; i < size; i++)
+        if (path[i] == x)
+            return 0;
+    return 1;
+}
+/*
+ *
+ *
+ * create a queue which will store path(s) of type vector
+initialise the queue with first path starting from src
+
+Now run a loop till queue is not empty
+   get the frontmost path from queue
+   check if the lastnode of this path is destination
+       if true then print the path
+   run a loop for all the vertices connected to the
+   current vertex i.e. lastnode extracted from path
+      if the vertex is not visited in current path
+         a) create a new path from earlier path and
+             append this vertex
+         b) insert this new path to queue
+ * */
+
+double Graph::getPathTime(vector<int> path){
+    double time = 0.0;
+    for(int i=0; i < path.size() - 1; i++){
+        for(auto edge: findVertex(path.at(i))->getAdj()) {
+            if(edge.getDest()->getId() == path.at(i+1))
+            {
+                time += edge.weight;
+                break;
+            }
+        }
+    }
+    return time;
+}
+
+// utility function for finding paths in graph
+// from source to destination
+vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id)
+{
+    // create a queue which stores
+    // the paths
+    vector<vector<int>> paths;
+    queue<vector<int> > paths_queue;
+
+    // path vector to store the current path
+    vector<int> path;
+    path.push_back(src_id);
+    paths_queue.push(path);
+    while (!paths_queue.empty()) {
+        path = paths_queue.front();
+        paths_queue.pop();
+        int last = path[path.size() - 1];
+
+        // if last vertex is the desired destination
+        // then print the path
+        if (last == dest_id) {
+            printpath(path);
+            paths.push_back(path);
+        }
+
+        if(getPathTime(path) > 5.0){
+            continue;
+        }
+
+        // traverse to all the nodes connected to
+        // current vertex and push new path to queue
+        for (auto & e : findVertex(last)->getAdj()) {
+            auto w = e.dest;
+            if (isNotVisited(w->getId(), path)) {
+                vector<int> newpath(path);
+                newpath.push_back(w->getId());
+                paths_queue.push(newpath);
+            }
+        }
+    }
+
+    return paths;
+}
 
