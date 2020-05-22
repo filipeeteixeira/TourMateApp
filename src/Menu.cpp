@@ -120,7 +120,7 @@ void choosePreferences() {
                 getchar();
                 break;
             case 4:
-                user.addPreference("view_point");
+                user.addPreference("viewpoint");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
@@ -281,7 +281,7 @@ string chooseTag(string msg) {
             case 6:
                 return "guest_house";
             case 7:
-                return "view_point";
+                return "viewpoint";
             case 8:
                 return "attraction";
             case 9:

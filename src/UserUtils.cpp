@@ -15,6 +15,7 @@ void showTags(GraphViewer* gv, const vector<Vertex*>& vertexes) {
 }
 
 void getStartPoint(User &user, DataReader &dataReader, string startTag) {
+    cout << "Loading..." <<endl;
     dataReader.displayGraph();
 
     vector<Vertex*> tags;
@@ -41,6 +42,7 @@ void getStartPoint(User &user, DataReader &dataReader, string startTag) {
 }
 
 void getEndPoint(User &user, DataReader &dataReader, string endTag) {
+    cout << "Loading..." << endl;
     dataReader.displayGraph();
     cout << user.getUserSP()->getId()<< endl;
     dataReader.getGraphViewer()->setVertexColor(user.getUserSP()->getId(),"green");
