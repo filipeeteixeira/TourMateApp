@@ -8,6 +8,10 @@ User::User() {
     name = "UNDEFINED";
     age = 0;
     availableTime = 0;
+    preferences = {};
+    availableTime = 1;
+    startPoint = nullptr;
+    endPoint = nullptr;
 }
 
 void User::addPreference(string preference) {
