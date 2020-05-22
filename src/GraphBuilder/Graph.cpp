@@ -371,13 +371,14 @@ bool pathInPQ(const vector<int>& path, PQ pq){
 }
 
 vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
-    //vector<vector<int>> A(100);
-
+    vector<vector<int>> A;
 
     //inicializa o vetor
+    /*
     vector<vector<int> > A(100);
     for ( int i = 0 ; i < 100 ; i++ )
         A[i].resize(1000);
+    */
     // Determine the shortest path from the source to the sink.
     //-> A[0] = Dijkstra(Graph, source, sink);
     dijkstraShortestPath(*findVertex(src_id), *findVertex(dest_id));
@@ -420,7 +421,7 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
             break;
 
         //B.sort();
-        A[k] = B.top();
+        A.push_back(B.top());
         B.pop();
     }
 
