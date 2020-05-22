@@ -283,6 +283,8 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
         if (last == dest_id) {
             printpath(path);
             paths.push_back(path);
+            if(paths.size() == 5)
+                break;
         }
 
         if(getPathTime(path) > maxTime){
@@ -296,11 +298,14 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
             if (isNotVisited(w->getId(), path)) {
                 vector<int> newpath(path);
                 newpath.push_back(w->getId());
-                paths_queue.push(newpath);
+                //cout << "newpath: " << getPathTime(newpath) << endl;
+                if(getPathTime(path) <= maxTime){
+                    paths_queue.push(newpath);
+                }
+
             }
         }
     }
 
     return paths;
 }
-

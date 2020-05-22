@@ -3,9 +3,11 @@
 // Created by breno on 5/12/2020.
 //
 
+#include <algorithm>
 #include "Menu.h"
 #include "GraphBuilder/Graph.h"
 #include "GraphBuilder/Vertex.h"
+
 
 DataReader dataReader;
 User user;
@@ -296,6 +298,40 @@ string chooseTag(string msg) {
     }while(true);
 }
 
+//return number of preferences in path
+int checkIfPathHasUserPreferences(const vector<int>& path){
+    int total = 0;
+    for(int i : path){
+        for(const auto& preference: user.getPreferences())
+            if(dataReader.getGraph().findVertex(i)->getTag() == preference) total++;
+    }
+    return total;
+}
+
+bool comparePaths(const vector<int>& path1, const vector<int>& path2){
+    if(checkIfPathHasUserPreferences(path1) > checkIfPathHasUserPreferences(path2))
+        return true;
+    return dataReader.getGraph().getPathTime(path1) < dataReader.getGraph().getPathTime(path2);
+}
+
+void sortByUserPreferences(vector<vector<int>> &paths){
+    sort(paths.begin(), paths.end(), comparePaths);
+}
+
+void showRecommendedPaths(vector<vector<int>> paths){
+    cout << "Loading recommendations..." << endl;
+    int i = 0;
+    if(paths.empty())
+        cout << "No recommendations found..." << endl;
+    sortByUserPreferences(paths);
+    for(const vector<int>& path: paths){
+        cout << "["<< i+1 <<"] " << endl
+        << "Expected Time: " <<  dataReader.getGraph().getPathTime(path) << endl
+        << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
+        i++;
+    }
+}
+
 void showTourOptions(){
     cout << "TOUR OPTIONS: " << endl;
     cout << "   [1] New Tour" << endl;
@@ -327,6 +363,8 @@ void tourOptions(){
 
                 getStartPoint(user, dataReader,chooseTag("Where are you"));
                 getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
+
+                showRecommendedPaths(dataReader.getGraph().BFS_Paths(user.getUserSP()->getId(), user.getUserEP()->getId(), 2));
 
                 cout << "Press any key to continue ...";
                 getchar();
