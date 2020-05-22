@@ -64,6 +64,15 @@ void Vertex::addEdge(Vertex *dest, double w) {
     adj.emplace_back(dest, w);
 }
 
+void Vertex::removeEdge(Vertex *dest) {
+    for(int i=0; i<adj.size(); i++){
+        if(adj.at(i).getDest() == dest) {
+            adj.erase(adj.begin() + i); return;
+        }
+    }
+}
+
+
 void Vertex::setLon(double lon){
     this->lon=lon;
 }

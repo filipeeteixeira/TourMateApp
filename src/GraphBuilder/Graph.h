@@ -65,6 +65,14 @@ public:
     vector<vector<int>> BFS_Paths(int src_id, int dest_id, double maxTime);
 
     double getPathTime(vector<int> path);
+
+    vector<int> getPathTo(const int &dest) const;
+
+    vector<vector<int>> YenKSP(int src_id, int dest_id, int k);
+
+    bool removeBidirectionalEdge(const int &sourc, const int &dest);
+
+    void removeVertex(const int & vertexId);
 };
 
 /**************** Search algorithm ************/

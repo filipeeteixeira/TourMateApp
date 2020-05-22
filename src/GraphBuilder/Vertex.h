@@ -27,10 +27,12 @@ class Vertex {
 
     double dist = 0;
     vector<Edge> adj;		// outgoing edges
+    Vertex* path;
     vector<Vertex *>paths;
     vector<int>time;
     int queueIndex = 0; 		// required by MutablePriorityQueue
     void addEdge(Vertex *dest, double w);
+    void removeEdge(Vertex *dest);
 public:
 
     bool operator<(Vertex & vertex) const; // // required by MutablePriorityQueue
