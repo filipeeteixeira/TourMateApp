@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+#include <utility>
 #include "Vertex.h"
 #include "Graph.h"
 
@@ -44,13 +45,10 @@ bool Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
 
 void Graph::removeVertex(const int & vertexId)
 {
-    auto it = vertexSet.begin();
-    while(it != vertexSet.end()) {
-        if()
-            vertexSet.erase(it);
-
-        next(it, 1);
-    }
+    /*
+    auto position = find(vertexSet.begin(), vertexSet.end(), 8);
+    if (position != vertexSet.end())
+        vertexSet.erase(position);*/
 }
 
 int Graph::getNumVertex() const {
@@ -352,15 +350,46 @@ vector<int> getNodes(vector<int> path, int start, int end){
     return newVec;
 }
 
+struct Comparator{
+    Graph g;
+    Comparator(Graph g) { this->g= std::move(g); }
+    bool operator () (vector<int> const & a, vector<int> const & b) {
+        return g.findVertex(a.at(a.size()-1))->getDist() > g.findVertex(b.at(b.size()-1))->getDist();
+    }
+};
+
+using PQ = priority_queue<vector<int>, vector< vector<int> >, Comparator>;
+
+bool pathInPQ(const vector<int>& path, PQ pq){
+    while(!pq.empty()){
+        if(path == pq.top()){
+            return true;
+        }
+        pq.pop();
+    }
+    return false;
+}
+
 vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
-    vector<vector<int>> A;
+    //vector<vector<int>> A(100);
+
+
+    //inicializa o vetor
+    vector<vector<int> > A(100);
+    for ( int i = 0 ; i < 100 ; i++ )
+        A[i].resize(1000);
     // Determine the shortest path from the source to the sink.
     //-> A[0] = Dijkstra(Graph, source, sink);
     dijkstraShortestPath(*findVertex(src_id), *findVertex(dest_id));
     A.push_back(getPathTo(dest_id));
     // Initialize the set to store the potential kth shortest path.
-    vector<int> B;
+
+    // Função que compara os paths
+    //auto compare = [](vector<int> const & a, vector<int> const & b) {return findVertex(a.at(a.size()-1))->getDist() > findVertex(b.at(b.size()-1))->getDist();};
+    PQ B(*this);
     // -> B = [];
+
+    vector<Vertex*> auxVertexSet(vertexSet);
 
 
     for(int k=1; k <= Kn; k++){
@@ -375,58 +404,26 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
             }
             for(auto rootPathNode: rootPath){
                 if(rootPathNode != spurNode)
-                    remove
+                    removeVertex(rootPathNode);
             }
 
             dijkstraShortestPath(*findVertex(spurNode), *findVertex(dest_id));
             vector<int> spurPath =  getPathTo(dest_id);
             vector<int> totalPath;
             totalPath.insert( totalPath.end(), spurPath.begin(), spurPath.end() );
+            if(!pathInPQ(totalPath, B))
+                B.push(totalPath);
+
+            vertexSet = auxVertexSet;
         }
+        if(B.empty())
+            break;
+
+        //B.sort();
+        A[k] = B.top();
+        B.pop();
     }
 
-    for k from 1 to K:  // ok
-    // The spur node ranges from the first node to the next to last node in the previous k-shortest path.
-    for i from 0 to size(A[k − 1]) − 2: // ok
-
-    // Spur node is retrieved from the previous k-shortest path, k − 1.
-    spurNode = A[k-1].node(i);
-    // The sequence of nodes from the source to the spur node of the previous k-shortest path.
-    rootPath = A[k-1].nodes(0, i);
-
-    for each path p in A:
-    if rootPath == p.nodes(0, i):
-    // Remove the links that are part of the previous shortest paths which share the same root path.
-    remove p.edge(i,i + 1) from Graph;
-
-    for each node rootPathNode in rootPath except spurNode:
-    remove rootPathNode from Graph;
-
-    // Calculate the spur path from the spur node to the sink.
-    spurPath = Dijkstra(Graph, spurNode, sink);
-
-    // Entire path is made up of the root path and spur path.
-    totalPath = rootPath + spurPath;
-    // Add the potential k-shortest path to the heap.
-    if (totalPath not in B):
-    B.append(totalPath);
-
-    // Add back the edges and nodes that were removed from the graph.
-    restore edges to Graph;
-    restore nodes in rootPath to Graph;
-
-    if B is empty:
-    // This handles the case of there being no spur paths, or no spur paths left.
-    // This could happen if the spur paths have already been exhausted (added to A),
-    // or there are no spur paths at all - such as when both the source and sink vertices
-    // lie along a "dead end".
-    break;
-    // Sort the potential k-shortest paths by cost.
-    B.sort();
-    // Add the lowest cost path becomes the k-shortest path.
-    A[k] = B[0];
-    // In fact we should rather use shift since we are removing the first element
-    B.pop();
-
-    return A;
+   return A;
 }
+

@@ -8,6 +8,9 @@ int main() {
     dataReader.displayGraph();
     dataReader.getGraph().dijkstraShortestPath(*dataReader.getGraph().findVertex(2), *dataReader.getGraph().findVertex(10));
     dataReader.getGraph().getPathTo(10);
+
+    vector<vector<int>>  A = dataReader.getGraph().YenKSP(2, 10, 10);
+
     getchar();
     //dataReader.getGraph().dfsAllPathsVisit(0, 1);
     menu();
