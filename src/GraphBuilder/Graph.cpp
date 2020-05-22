@@ -361,11 +361,24 @@ struct Comparator{
 using PQ = priority_queue<vector<int>, vector< vector<int> >, Comparator>;
 
 bool pathInPQ(const vector<int>& path, PQ pq){
+    int i = 0;
     while(!pq.empty()){
-        if(path == pq.top()){
-            return true;
+        if(path.size() != pq.top().size()){
+            pq.pop();
         }
-        pq.pop();
+        else
+        {
+            i = 0;
+            while(i<path.size()) {
+                if(pq.top()[i] != path[i]){
+                    pq.pop();
+                    break;
+                }
+                i++;
+            }
+            if(i == path.size())
+                return true;
+        }
     }
     return false;
 }
@@ -396,7 +409,7 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
     for(int k=1; k <= Kn; k++){
         for(int i=0; i <= A.at(k-1).size()-2; i++){
             int spurNode = A[k-1].at(i);
-            vector<int> rootPath = A[k-1];
+            vector<int> rootPath = getNodes(A[k-1], 0, i);
 
             for(auto path: A){
                 if(rootPath == getNodes(path, 0, i)){
@@ -411,6 +424,8 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
             dijkstraShortestPath(*findVertex(spurNode), *findVertex(dest_id));
             vector<int> spurPath =  getPathTo(dest_id);
             vector<int> totalPath;
+            totalPath.reserve(spurPath.size() + rootPath.size());
+            totalPath.insert(totalPath.end(), rootPath.begin(), rootPath.end());
             totalPath.insert( totalPath.end(), spurPath.begin(), spurPath.end() );
             if(!pathInPQ(totalPath, B))
                 B.push(totalPath);

@@ -11,9 +11,13 @@ int main() {
 
     vector<vector<int>>  A = dataReader.getGraph().YenKSP(2, 10, 10);
 
-    getchar();
+    for(auto path: A){
+        for(int id: path)
+            cout<<id<<" ";
+        cout <<endl;
+    }
     //dataReader.getGraph().dfsAllPathsVisit(0, 1);
-    menu();
+   // menu();
 
     return 0;
 }
