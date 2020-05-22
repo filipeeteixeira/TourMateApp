@@ -15,6 +15,15 @@ Vertex * Graph::findVertex(const int &id) const {
     return vertexSet.at(i->second);
 }
 
+Vertex * Graph::findVertexAlg(const int &id) const {
+    for (auto v : vertexSet){
+        if(v->getId()==id){
+            return v;
+        }
+    }
+    return nullptr;
+}
+
 bool Graph::addVertex(const int &id, const double &x, const double &y) {
     if ( findVertex(id) != NULL)
         return false;
@@ -45,10 +54,12 @@ bool Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
 
 void Graph::removeVertex(const int & vertexId)
 {
-    /*
-    auto position = find(vertexSet.begin(), vertexSet.end(), 8);
-    if (position != vertexSet.end())
-        vertexSet.erase(position);*/
+    for(int i = 0; i < vertexSet.size(); i++){
+        if(vertexSet[i]->id == vertexId) {
+            vertexSet.erase(vertexSet.begin() + i);
+            return;
+        }
+    }
 }
 
 int Graph::getNumVertex() const {
@@ -109,21 +120,27 @@ vector<int> Graph::getPathTo(const int &dest) const{
  */
 
 void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
-    auto s = initSingleSource(origin.getId());
-    bool found_dest = false;
-    MutablePriorityQueue<Vertex> q;
-    q.insert(s);
-    while( !q.empty() && !found_dest) {
-        auto v = q.extractMin();
-        for(auto e : v->adj) {
-            auto oldDist = e.dest->dist;
-            if(e.dest->getId() == dest.getId())
-                found_dest = true;
-            if (relax(v, e.dest, e.weight)) {
-                if (oldDist == INF)
-                    q.insert(e.dest);
+    for (auto &v : vertexSet){
+        v->dist=INT64_MAX;
+        v->path= NULL;
+    }
+    Vertex *s = findVertexAlg(origin.getId());
+    s->dist=0;
+
+    MutablePriorityQueue<Vertex > Q;
+    Q.insert(s);
+
+    while(!Q.empty()){
+        Vertex *tmp = Q.extractMin();
+        for (auto &w : tmp->adj){
+            if(w.dest->dist>tmp->dist + w.weight){
+                w.dest->dist=tmp->dist + w.weight;
+                w.dest->path=tmp;
+                if (!Q.inQueue(w.dest))
+                    Q.insert(w.dest);
                 else
-                    q.decreaseKey(e.dest);
+                    Q.decreaseKey(w.dest);
+
             }
         }
     }
@@ -283,7 +300,7 @@ double Graph::getPathTime(vector<int> path){
     double time = 0.0;
     for(int i=0; i < path.size() - 1; i++){
         for(auto edge: findVertex(path.at(i))->getAdj()) {
-            if(edge.getDest()->getId() == path.at(i+1))
+            if(edge.getDest()->getId() == path.at(i))
             {
                 time += edge.weight;
                 break;
@@ -326,7 +343,7 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
 
         // traverse to all the nodes connected to
         // current vertex and push new path to queue
-        for (auto & e : findVertex(last)->getAdj()) {
+        for (auto & e : findVertexAlg(last)->getAdj()) {
             auto w = e.dest;
             if (isNotVisited(w->getId(), path)) {
                 vector<int> newpath(path);
@@ -345,7 +362,7 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
 
 vector<int> getNodes(vector<int> path, int start, int end){
     vector<int>::const_iterator first = path.begin() + start;
-    vector<int>::const_iterator last =  path.begin() + end;
+    vector<int>::const_iterator last =  path.begin() + end + 1;
     vector<int> newVec(first, last);
     return newVec;
 }
@@ -354,7 +371,7 @@ struct Comparator{
     Graph g;
     Comparator(Graph g) { this->g= std::move(g); }
     bool operator () (vector<int> const & a, vector<int> const & b) {
-        return g.findVertex(a.at(a.size()-1))->getDist() > g.findVertex(b.at(b.size()-1))->getDist();
+        return g.findVertexAlg(a.at(a.size()-1))->getDist() > g.findVertexAlg(b.at(b.size()-1))->getDist();
     }
 };
 
@@ -394,7 +411,7 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
     */
     // Determine the shortest path from the source to the sink.
     //-> A[0] = Dijkstra(Graph, source, sink);
-    dijkstraShortestPath(*findVertex(src_id), *findVertex(dest_id));
+    dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
     A.push_back(getPathTo(dest_id));
     // Initialize the set to store the potential kth shortest path.
 
@@ -413,7 +430,7 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
 
             for(auto path: A){
                 if(rootPath == getNodes(path, 0, i)){
-                    removeBidirectionalEdge(i, i+1);
+                    removeBidirectionalEdge(path.at(i), path.at(i+1));
                 }
             }
             for(auto rootPathNode: rootPath){
@@ -421,7 +438,7 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
                     removeVertex(rootPathNode);
             }
 
-            dijkstraShortestPath(*findVertex(spurNode), *findVertex(dest_id));
+            dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
             vector<int> spurPath =  getPathTo(dest_id);
             vector<int> totalPath;
             totalPath.reserve(spurPath.size() + rootPath.size());

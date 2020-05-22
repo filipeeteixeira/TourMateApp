@@ -30,6 +30,7 @@ class Graph {
 
 public:
 	Vertex *findVertex(const int &id) const;
+    Vertex *findVertexAlg(const int &id) const;
 	bool addVertex(const int &id, const double &x, const double &y);
 	bool addBidirectionalEdge(const int &sourc, const int &dest, double w);
 	int getNumVertex() const;
