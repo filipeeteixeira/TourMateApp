@@ -298,35 +298,35 @@ string chooseTag(string msg) {
 }
 
 //return number of preferences in path
-int checkIfPathHasUserPreferences(const vector<int>& path){
+int checkIfPathHasUserPreferences(Path*  path){
     int total = 0;
-    for(int i : path){
+    for(auto i: path->getPath()){
         for(const auto& preference: user.getPreferences())
             if(dataReader.getGraph().findVertex(i)->getTag() == preference) total++;
     }
     return total;
 }
 
-bool comparePaths(const vector<int>& path1, const vector<int>& path2){
+bool comparePaths(Path* path1, Path* path2){
     if(checkIfPathHasUserPreferences(path1) > checkIfPathHasUserPreferences(path2))
         return true;
-    return dataReader.getGraph().getPathTime(path1) < dataReader.getGraph().getPathTime(path2);
+    return path1->getWeight() < path2->getWeight();
 }
 
-void sortByUserPreferences(vector<vector<int>> &paths){
+void sortByUserPreferences(vector<Path*> & paths){
     sort(paths.begin(), paths.end(), comparePaths);
 }
 
-void showRecommendedPaths(vector<vector<int>> paths){
+void showRecommendedPaths(vector<Path*> paths){
     cout << "Loading recommendations..." << endl;
     int i = 0;
     if(paths.empty())
         cout << "No recommendations found..." << endl;
     sortByUserPreferences(paths);
-    for(const vector<int>& path: paths){
+    for(Path *path: paths){
         cout << "["<< i+1 <<"] " << endl
         << "Expected Time: " ;
-        outputHoursAndMinutes(dataReader.getGraph().getPathTime(path));
+        outputHoursAndMinutes(path->getWeight());
         cout << endl;
         cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
         i++;
@@ -370,7 +370,7 @@ void tourOptions(){
                 getStartPoint(user, dataReader,chooseTag("Where are you"));
                 getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
 
-                showRecommendedPaths(dataReader.getGraph().BFS_Paths(user.getUserSP()->getId(), user.getUserEP()->getId(), 2));
+                showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
 
                 cout << "Press any key to continue ...";
                 getchar();

@@ -405,20 +405,11 @@ int Graph::path_cost(vector<int> path) {
 vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
     vector<Path *> A;
 
-    //inicializa o vetor
-    /*
-    vector<vector<int> > A(100);
-    for ( int i = 0 ; i < 100 ; i++ )
-        A[i].resize(1000);
-    */
     // Determine the shortest path from the source to the sink.
     //-> A[0] = Dijkstra(Graph, source, sink);
     dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
     A.push_back(getPathTo(dest_id));
     // Initialize the set to store the potential kth shortest path.
-
-    // Função que compara os paths
-    //auto compare = [](vector<int> const & a, vector<int> const & b) {return findVertex(a.at(a.size()-1))->getDist() > findVertex(b.at(b.size()-1))->getDist();};
     PQ B;
     // -> B = [];
 
