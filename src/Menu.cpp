@@ -308,9 +308,7 @@ int checkIfPathHasUserPreferences(Path*  path){
 }
 
 bool comparePaths(Path* path1, Path* path2){
-    if(checkIfPathHasUserPreferences(path1) > checkIfPathHasUserPreferences(path2))
-        return true;
-    return path1->getWeight() < path2->getWeight();
+    return checkIfPathHasUserPreferences(path1) > checkIfPathHasUserPreferences(path2);
 }
 
 void sortByUserPreferences(vector<Path*> & paths){

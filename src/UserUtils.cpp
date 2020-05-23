@@ -36,7 +36,7 @@ void getStartPoint(User &user, DataReader &dataReader, string startTag) {
         cout << "Invalid point." << endl;
     }while(true);
 
-    dataReader.getGraphViewer()->closeWindow();
+    //dataReader.getGraphViewer()->closeWindow();
     user.setUserSP(tags.at(startPoint));
     cout << user.getUserSP()->getId()<< endl;
     //delete dataReader.getGraphViewer();
@@ -44,7 +44,7 @@ void getStartPoint(User &user, DataReader &dataReader, string startTag) {
 
 void getEndPoint(User &user, DataReader &dataReader, string endTag) {
     cout << "Loading..." << endl;
-    dataReader.displayGraph();
+    //dataReader.displayGraph();
     cout << user.getUserSP()->getId()<< endl;
 
     vector<Vertex*> tags;
@@ -60,6 +60,7 @@ void getEndPoint(User &user, DataReader &dataReader, string endTag) {
 
     showTags(dataReader.getGraphViewer(), tags);
 
+    dataReader.getGraphViewer()->rearrange();
 
     unsigned int endPoint;
     do{
