@@ -4,12 +4,12 @@
 
 int main() {
     DataReader dataReader;
-    dataReader.readData("","test", onFoot);
+    dataReader.readData("","4x4", onFoot);
     //dataReader.displayGraph();
     //getchar();
     dataReader.getGraph().dijkstraShortestPath(*dataReader.getGraph().findVertex(2), *dataReader.getGraph().findVertex(10));
     dataReader.getGraph().getPathTo(10);
-    vector<Path *>  A = dataReader.getGraph().YenKSP(0, 5, 20);
+    vector<Path *>  A = dataReader.getGraph().YenKSP(1, 10, 20);
 
     for(auto path: A){
         for(int id: path->getPath())

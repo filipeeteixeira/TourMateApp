@@ -95,7 +95,6 @@ void DataReader::readEdges(Transport transport) {
     string line;
     int pointA, pointB;
     int totalEdges;
-    int wei;
     string tmp;
 
     getline(edgesFile,line);
@@ -110,10 +109,6 @@ void DataReader::readEdges(Transport transport) {
 
         getline(ssline,tmp,',');
         pointB=stoi(tmp);
-
-        //TESTINGGGGGG
-        getline(ssline,tmp,')');
-        wei=stoi(tmp);
 
         if (realMaps) {
             switch (transport) {
@@ -132,7 +127,7 @@ void DataReader::readEdges(Transport transport) {
             }
         }
         else
-            graph.addBidirectionalEdge(pointA,pointB,wei);
+            graph.addBidirectionalEdge(pointA,pointB,1);
     }
 }
 

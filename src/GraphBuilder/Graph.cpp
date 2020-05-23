@@ -123,7 +123,7 @@ Path *Graph::getPathTo(int dest) const{
 
 void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
     for (auto &v : vertexSet){
-        v->dist=INT64_MAX;
+        v->dist=INF;
         v->path= NULL;
     }
     Vertex *s = findVertexAlg(origin.getId());
@@ -371,7 +371,7 @@ vector<int> Graph::getNodes(vector<int> path, int start, int end){
 
 struct Comparator{
     bool operator () (const Path *p1, const Path *p2) {
-        return p1->getWeight()<p2->getWeight();
+        return p1->getWeight()>p2->getWeight();
     }
 };
 
@@ -437,7 +437,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
             rootPath->setWeight(path_cost(rootNodes));
 
             for(auto path: A){
-                if(rootPath->getPath() == getNodes(path->getPath(), 0, i)){
+                if(rootPath->getPath() == getNodes(path->getPath(), 0, i) && path->getPath().size() - 1 > i){
                     removed_edges.push_back(removeBidirectionalEdge(path->getPath().at(i), path->getPath().at(i+1)));
                 }
             }
@@ -451,9 +451,11 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
             Path *spurPath =  getPathTo(dest_id); //getPathTo ja calcula o weight
 
-            Path * totalPathP = *rootPath+spurPath;
-            if(!pathInPQ( totalPathP, B))
-                B.push(totalPathP);
+            if(spurPath!= nullptr) {
+                Path *totalPathP = *rootPath + spurPath;
+                if (!pathInPQ(totalPathP, B))
+                    B.push(totalPathP);
+            }
 
 
             // Add back the edges and nodes that were removed from the graph.
