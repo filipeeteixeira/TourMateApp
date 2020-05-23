@@ -38,7 +38,7 @@ bool Graph::addBidirectionalEdge(const int &sourc, const int &dest, double w) {
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->addEdge(v2,w);
-    //v2->addEdge(v1,w);
+    v2->addEdge(v1,w);
     return true;
 }
 
@@ -48,7 +48,7 @@ Edge * Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
     if (v1 == NULL || v2 == NULL)
         return nullptr;
 
-    //v2->removeEdge(v1);
+    v2->removeEdge(v1);
     return v1->removeEdge(v2);
 }
 

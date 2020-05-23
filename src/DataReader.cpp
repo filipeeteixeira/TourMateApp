@@ -107,7 +107,7 @@ void DataReader::readEdges(Transport transport) {
         getline(ssline, tmp, ',');
         pointA=stoi(tmp);
 
-        getline(ssline,tmp,',');
+        getline(ssline,tmp,')');
         pointB=stoi(tmp);
 
         if (realMaps) {
