@@ -95,6 +95,7 @@ void DataReader::readEdges(Transport transport) {
     string line;
     int pointA, pointB;
     int totalEdges;
+    int wei;
     string tmp;
 
     getline(edgesFile,line);
@@ -107,8 +108,12 @@ void DataReader::readEdges(Transport transport) {
         getline(ssline, tmp, ',');
         pointA=stoi(tmp);
 
-        getline(ssline,tmp,')');
+        getline(ssline,tmp,',');
         pointB=stoi(tmp);
+
+        //TESTINGGGGGG
+        getline(ssline,tmp,')');
+        wei=stoi(tmp);
 
         if (realMaps) {
             switch (transport) {
@@ -127,7 +132,7 @@ void DataReader::readEdges(Transport transport) {
             }
         }
         else
-            graph.addBidirectionalEdge(pointA,pointB,1);
+            graph.addBidirectionalEdge(pointA,pointB,wei);
     }
 }
 
@@ -200,7 +205,7 @@ void DataReader::displayGraph() {
                 graphViewer->addNode(vertex->getId(), vertex->getX(), vertex->getY());
                 graphViewer->setVertexLabel(vertex->getId(), to_string(vertex->getId()));
                 for (auto edge : vertex->getAdj())
-                    graphViewer->addEdge(edgeID++, vertex->getId(), edge.getDest()->getId(), EdgeType::UNDIRECTED);
+                    graphViewer->addEdge(edgeID++, vertex->getId(), edge.getDest()->getId(), EdgeType::DIRECTED);
             }
 
         }

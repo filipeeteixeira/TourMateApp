@@ -38,7 +38,7 @@ bool Graph::addBidirectionalEdge(const int &sourc, const int &dest, double w) {
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->addEdge(v2,w);
-    v2->addEdge(v1,w);
+    //v2->addEdge(v1,w);
     return true;
 }
 
@@ -48,7 +48,7 @@ bool Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->removeEdge(v2);
-    v2->removeEdge(v1);
+    //v2->removeEdge(v1);
     return true;
 }
 
@@ -101,17 +101,20 @@ bool Graph::relax(Vertex *v, Vertex *w, double weight) {
         return false;
 }
 
-vector<int> Graph::getPathTo(const int &dest) const{
+Path *Graph::getPathTo(int dest) const{
     vector<int> res;
-    auto v = findVertexAlg(dest);
+    Vertex *v = findVertexAlg(dest);
+    Vertex *auxv = v;
     if (v == nullptr || v->dist == INF) // missing or disconnected
-        return res;
+        return nullptr;
     for ( ; v != nullptr; v = v->path) {
         res.push_back(v->getId());
         //cout << v->getId() <<"->";
     }
     reverse(res.begin(), res.end());
-    return res;
+    Path * path = new Path(res);
+    path->setWeight(auxv->getDist());
+    return path;
 
 }
 
@@ -368,14 +371,12 @@ vector<int> getNodes(vector<int> path, int start, int end){
 }
 
 struct Comparator{
-    Graph g;
-    Comparator(Graph g) { this->g= std::move(g); }
-    bool operator () (vector<int> const & a, vector<int> const & b) {
-        return g.findVertexAlg(a.at(a.size()-1))->getDist() < g.findVertexAlg(b.at(b.size()-1))->getDist();
+    bool operator () (const Path *p1, const Path *p2) {
+        return p1->getWeight()<p2->getWeight();
     }
 };
 
-using PQ = priority_queue<vector<int>, vector< vector<int> >, Comparator>;
+using PQ = priority_queue<Path*, vector<Path*>, Comparator>;
 
 vector<int> removeFirst(PQ &pq){
     vector<int> res;
@@ -387,31 +388,19 @@ vector<int> removeFirst(PQ &pq){
     return res;
 }
 
-bool pathInPQ(const vector<int>& path, PQ pq){
-    int i = 0;
+bool pathInPQ(Path *path, PQ pq){
     while(!pq.empty()){
-        if(path.size() != pq.top().size()){
+        if(*path == *pq.top()){
             pq.pop();
+            return true;
         }
-        else
-        {
-            i = 0;
-            while(i<path.size()) {
-                if(pq.top()[i] != path[i]){
-                    pq.pop();
-                    break;
-                }
-                i++;
-            }
-            if(i == path.size())
-                return true;
-        }
+        pq.pop();
     }
     return false;
 }
 
-vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
-    vector<vector<int>> A;
+vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
+    vector<Path *> A;
 
     //inicializa o vetor
     /*
@@ -427,36 +416,37 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
 
     // Função que compara os paths
     //auto compare = [](vector<int> const & a, vector<int> const & b) {return findVertex(a.at(a.size()-1))->getDist() > findVertex(b.at(b.size()-1))->getDist();};
-    PQ B(*this);
+    PQ B;
     // -> B = [];
 
     vector<Vertex*> auxVertexSet(vertexSet);
 
 
     for(int k=1; k <= Kn; k++){
-        for(int i=0; i <= A.at(k-1).size()-2; i++){
-            int spurNode = A[k-1].at(i);
-            vector<int> rootPath = getNodes(A[k-1], 0, i);
+        for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
+            int spurNode = A[k-1]->getPath().at(i);
+
+            //build root path
+            vector<int> rootNodes = getNodes(A[k-1]->getPath(), 0, i);
+            Path * rootPath = new Path(rootNodes);
 
             for(auto path: A){
-                if(rootPath == getNodes(path, 0, i) && path.size() - 1 > i){
-                    removeBidirectionalEdge(path.at(i), path.at(i+1));
+                if(rootPath->getPath() == getNodes(path->getPath(), 0, i) && path->getPath().size() - 1 > i){
+                    removeBidirectionalEdge(path->getPath().at(i), path->getPath().at(i+1));
                 }
             }
-            /*
-            for(auto rootPathNode: rootPath){
+
+            for(auto rootPathNode: rootPath->getPath()){
                 if(rootPathNode != spurNode)
                     removeVertex(rootPathNode);
-            }*/
+            }
 
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
-            vector<int> spurPath =  getPathTo(dest_id);
-            vector<int> totalPath;
-            totalPath.reserve(spurPath.size() + rootPath.size());
-            totalPath.insert(totalPath.end(), rootPath.begin(), rootPath.end());
-            totalPath.insert( totalPath.end(), spurPath.begin(), spurPath.end() );
-            if(!pathInPQ(totalPath, B))
-                B.push(totalPath);
+            Path *spurPath =  getPathTo(dest_id); //getPathTo ja calcula o weight
+
+            Path * totalPathP = *rootPath+spurPath;
+            if(!pathInPQ( totalPathP, B))
+                B.push(totalPathP);
 
             vertexSet = auxVertexSet;
         }
