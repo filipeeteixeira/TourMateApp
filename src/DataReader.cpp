@@ -188,6 +188,7 @@ void DataReader::displayGraph() {
             for (Vertex* vertex : graph.getVertexSet()) {
                 for (auto edge : vertex->getAdj()) {
                     graphViewer->addEdge(id, vertex->getId(), edge->getDest()->getId(), EdgeType::UNDIRECTED);
+                    graphViewer->setEdgeColor(id, "gray");
                     graphViewer->setEdgeLabel(id, "");
                     id++;
                 }

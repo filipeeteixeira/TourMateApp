@@ -8,7 +8,7 @@ void showTags(GraphViewer* gv, const vector<Vertex*>& vertexes) {
     for(int i = 0; i < vertexes.size(); i++) {
         gv->setVertexColor(vertexes.at(i)->getId(), "yellow");
         gv->setVertexLabel(vertexes.at(i)->getId(), to_string(i));
-        gv->setVertexSize(vertexes.at(i)->getId(), 30);
+        gv->setVertexSize(vertexes.at(i)->getId(), 20);
     }
 
     gv->rearrange();
@@ -16,14 +16,15 @@ void showTags(GraphViewer* gv, const vector<Vertex*>& vertexes) {
 
 void getStartPoint(User &user, DataReader &dataReader, string startTag) {
     cout << "Loading..." <<endl;
+
     dataReader.displayGraph();
 
     vector<Vertex*> tags;
     for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
+        dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 0);
         if(vertex->getTag() == startTag)
             tags.push_back(vertex);
     }
-
     showTags(dataReader.getGraphViewer(), tags);
 
     unsigned int startPoint;
@@ -45,15 +46,17 @@ void getEndPoint(User &user, DataReader &dataReader, string endTag) {
     cout << "Loading..." << endl;
     dataReader.displayGraph();
     cout << user.getUserSP()->getId()<< endl;
-    dataReader.getGraphViewer()->setVertexColor(user.getUserSP()->getId(),"green");
-    dataReader.getGraphViewer()->setVertexSize(user.getUserSP()->getId(),30);
-    dataReader.getGraphViewer()->setVertexLabel(user.getUserSP()->getId(),"START");
 
     vector<Vertex*> tags;
     for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
+        dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 0);
         if(vertex->getTag() == endTag)
             tags.push_back(vertex);
     }
+
+    dataReader.getGraphViewer()->setVertexColor(user.getUserSP()->getId(),"green");
+    dataReader.getGraphViewer()->setVertexSize(user.getUserSP()->getId(),20);
+    dataReader.getGraphViewer()->setVertexLabel(user.getUserSP()->getId(),"START");
 
     showTags(dataReader.getGraphViewer(), tags);
 

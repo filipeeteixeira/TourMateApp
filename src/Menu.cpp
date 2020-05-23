@@ -229,12 +229,19 @@ void userOptions(){
 }
 
 void askForCity(string &city) {
+    cout << "       Available Cities" << endl
+         << "    Aveiro      Gondomar" << endl
+         << "    Braga       Lisboa" << endl
+         << "    Coimbra     Maia" << endl
+         << "    Ermesinde   Porto" << endl
+         << "    Fafe        Viseu" << endl;
     do{
+        cout << "City name?" << endl;
         getline(cin, city);
         normalizeCity(city);
         if(city == "Aveiro" || city == "Braga" || city == "Coimbra" || city == "Ermesinde" || city == "Fafe" || city == "Gondomar" || city == "Lisboa" || city == "Maia" || city == "Porto"  || city == "Viseu")
             break;
-        cout << "Invalid city name.";
+        cout << "Invalid city name." << endl;
     }while(true);
 }
 
