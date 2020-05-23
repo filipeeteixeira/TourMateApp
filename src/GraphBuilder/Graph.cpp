@@ -371,11 +371,21 @@ struct Comparator{
     Graph g;
     Comparator(Graph g) { this->g= std::move(g); }
     bool operator () (vector<int> const & a, vector<int> const & b) {
-        return g.findVertexAlg(a.at(a.size()-1))->getDist() > g.findVertexAlg(b.at(b.size()-1))->getDist();
+        return g.findVertexAlg(a.at(a.size()-1))->getDist() < g.findVertexAlg(b.at(b.size()-1))->getDist();
     }
 };
 
 using PQ = priority_queue<vector<int>, vector< vector<int> >, Comparator>;
+
+vector<int> removeFirst(PQ &pq){
+    vector<int> res;
+    PQ pqAux = pq;
+    while(!pq.empty()){
+
+        pq.pop();
+    }
+    return res;
+}
 
 bool pathInPQ(const vector<int>& path, PQ pq){
     int i = 0;
@@ -424,19 +434,20 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
 
 
     for(int k=1; k <= Kn; k++){
-        for(int i=0; i < A.at(k-1).size()-2; i++){
+        for(int i=0; i <= A.at(k-1).size()-2; i++){
             int spurNode = A[k-1].at(i);
             vector<int> rootPath = getNodes(A[k-1], 0, i);
 
             for(auto path: A){
-                if(rootPath == getNodes(path, 0, i)){
+                if(rootPath == getNodes(path, 0, i) && path.size() - 1 > i){
                     removeBidirectionalEdge(path.at(i), path.at(i+1));
                 }
             }
+            /*
             for(auto rootPathNode: rootPath){
                 if(rootPathNode != spurNode)
                     removeVertex(rootPathNode);
-            }
+            }*/
 
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
             vector<int> spurPath =  getPathTo(dest_id);

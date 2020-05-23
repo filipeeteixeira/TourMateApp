@@ -67,7 +67,8 @@ void Vertex::addEdge(Vertex *dest, double w) {
 void Vertex::removeEdge(Vertex *dest) {
     for(int i=0; i<adj.size(); i++){
         if(adj.at(i).getDest() == dest) {
-            adj.erase(adj.begin() + i); return;
+            //adj.erase(adj.begin() + i); return;
+            adj.at(i).weight = 1000000; return;
         }
     }
 }
