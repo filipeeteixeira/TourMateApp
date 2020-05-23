@@ -50,6 +50,7 @@ void getEndPoint(User &user, DataReader &dataReader, string endTag) {
     vector<Vertex*> tags;
     for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
         dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 0);
+        dataReader.getGraphViewer()->clearVertexLabel(vertex->getId());
         if(vertex->getTag() == endTag)
             tags.push_back(vertex);
     }
