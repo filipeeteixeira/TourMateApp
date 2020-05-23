@@ -59,3 +59,7 @@ void User::setUserEP(Vertex * ep) {
 void User::setUserSP(Vertex * sp) {
     this->startPoint=sp;
 }
+
+void User::setAvailableTime(double time) {
+    this->availableTime = time;
+}

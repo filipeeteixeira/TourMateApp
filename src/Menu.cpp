@@ -63,7 +63,6 @@ void showUserLoadOptions() {
     cout << "   [1] Change/Add User Name" << endl;
     cout << "   [2] Change/Add User Age" << endl;
     cout << "   [3] Add Preference" << endl;
-    cout << "   [4] Insert Available time" << endl;
     cout << "   [0] BACK" << endl;
 }
 
@@ -159,7 +158,6 @@ void showUserInfo() {
     cout << "   Preferences:" <<endl;
     for(auto p: pref)
         cout << "   " << p << endl;
-    cout << "   Available time:" <<endl;
 }
 
 void userLoadOptions(){
@@ -189,12 +187,6 @@ void userLoadOptions(){
                 user.setName(aux);
                 cout << "Press any key to continue ...";
                 getchar();
-                break;
-            case 4:
-                clear();
-                unsigned int time;
-                cout << "Available time?";
-                readInt(time,"Time");
                 break;
             case 0:
                 return;
@@ -326,8 +318,10 @@ void showRecommendedPaths(vector<vector<int>> paths){
     sortByUserPreferences(paths);
     for(const vector<int>& path: paths){
         cout << "["<< i+1 <<"] " << endl
-        << "Expected Time: " <<  dataReader.getGraph().getPathTime(path) << endl
-        << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
+        << "Expected Time: " ;
+        outputHoursAndMinutes(dataReader.getGraph().getPathTime(path));
+        cout << endl;
+        cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
         i++;
     }
 }
@@ -347,7 +341,12 @@ void tourOptions(){
         switch(option){
             case 1: {
                 string city;
+                double time;
                 dataReader.setRealMaps(true);
+                readDouble(time, "Available time (in hours)");
+                user.setAvailableTime(time);
+                chooseTransport();
+                clear();
                 cout << "Select the city to make a tour" << endl;
                 askForCity(city);
 
@@ -381,6 +380,39 @@ void tourOptions(){
     }while(true);
 }
 
+void showTransportOption(){
+    cout << "HOW DO YOU WANT TO GO TO YOUR DESTINATION: " << endl;
+    cout << "   [1] On foot" << endl;
+    cout << "   [2] Car" << endl;
+    cout << "   [3] Bus" << endl;
+}
+
+void chooseTransport(){
+    unsigned int option;
+    do{
+        clear();
+        showTransportOption();
+        readInt(option, "Option");
+
+        switch(option){
+            case 1:
+                user.transport = onFoot;
+                return;
+            case 2:
+                user.transport = car;
+                return;
+            case 3:
+                user.transport = bus;
+                return;
+            default:
+                cout << "Invalid option..." << endl;
+                cout << "Press any key to continue ...";
+                getchar();
+                break;
+        }
+
+    }while(true);
+}
 
 void showGraphOptions(){
     cout << "GRAPH OPTIONS: " << endl;
@@ -435,21 +467,21 @@ void chooseGraphOptions() {
         switch(option){
             case 1:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","4x4",onFoot);
+                dataReader.readData("","4x4",user.transport);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","8x8",onFoot);
+                dataReader.readData("","8x8",user.transport);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","16x16",onFoot);
+                dataReader.readData("","16x16",user.transport);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();

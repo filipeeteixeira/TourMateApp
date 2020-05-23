@@ -23,6 +23,9 @@ void userOptions();
 void showTourOptions();
 void tourOptions();
 
+void showTransportOption();
+void chooseTransport();
+
 void showGraphOptions();
 void graphOptions();
 

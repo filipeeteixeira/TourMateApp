@@ -15,10 +15,14 @@ void clear();
 
 bool readInt(unsigned int & n, const string msg);
 
+bool readDouble(double & n, const string msg);
+
 long double toRadians(const long double degree);
 
 void normalizeCity(string &s);
 
 string toLower(string const str);
+
+void outputHoursAndMinutes(double time);
 
 #endif //TOURMATEAPP_UTILS_H

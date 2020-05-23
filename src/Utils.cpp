@@ -30,6 +30,26 @@ bool readInt(unsigned int & n, const string msg)
     return true;
 }
 
+bool readDouble(double & n, const string msg){
+    cout << msg << " ? ";
+    while (!(cin >> n))
+    {
+        if (cin.eof())
+        {
+            cin.clear();
+            return false;
+        }
+        else
+        {
+            cin.clear();
+            cin.ignore(1000, '\n');
+        }
+        cout << msg << " ? ";
+    }
+    cin.ignore(1000, '\n');
+    return true;
+}
+
 // Utility function for
 // converting degrees to radians
 long double toRadians(const long double degree)
@@ -58,6 +78,15 @@ string toLower(string const str){
         result += tolower(c);
     }
     return result;
+}
+
+void outputHoursAndMinutes(double time){
+    if(time > 1){
+        cout<<(int) time<< " hours and ";
+        cout<< (int)((time - (int)time) * 60)<< " minutes";
+    }
+    else
+        cout<< (int)((time - (int)time) * 60)<< " minutes";
 }
 
 
