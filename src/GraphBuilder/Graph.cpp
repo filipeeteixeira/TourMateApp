@@ -103,7 +103,7 @@ bool Graph::relax(Vertex *v, Vertex *w, double weight) {
 
 vector<int> Graph::getPathTo(const int &dest) const{
     vector<int> res;
-    auto v = findVertex(dest);
+    auto v = findVertexAlg(dest);
     if (v == nullptr || v->dist == INF) // missing or disconnected
         return res;
     for ( ; v != nullptr; v = v->path) {
@@ -362,7 +362,7 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
 
 vector<int> getNodes(vector<int> path, int start, int end){
     vector<int>::const_iterator first = path.begin() + start;
-    vector<int>::const_iterator last =  path.begin() + end + 1;
+    vector<int>::const_iterator last =  path.begin() + end;
     vector<int> newVec(first, last);
     return newVec;
 }
@@ -424,7 +424,7 @@ vector<vector<int>> Graph::YenKSP(int src_id, int dest_id, int Kn){
 
 
     for(int k=1; k <= Kn; k++){
-        for(int i=0; i <= A.at(k-1).size()-2; i++){
+        for(int i=0; i < A.at(k-1).size()-2; i++){
             int spurNode = A[k-1].at(i);
             vector<int> rootPath = getNodes(A[k-1], 0, i);
 
