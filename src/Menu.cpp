@@ -237,12 +237,19 @@ void userOptions(){
 }
 
 void askForCity(string &city) {
+    cout << "       Available Cities" << endl
+    << "    Aveiro      Gondomar" << endl
+    << "    Braga       Lisboa" << endl
+    << "    Coimbra     Maia" << endl
+    << "    Ermesinde   Porto" << endl
+    << "    Fafe        Viseu" << endl;
     do{
+        cout << "City name?" << endl;
         getline(cin, city);
         normalizeCity(city);
         if(city == "Aveiro" || city == "Braga" || city == "Coimbra" || city == "Ermesinde" || city == "Fafe" || city == "Gondomar" || city == "Lisboa" || city == "Maia" || city == "Porto"  || city == "Viseu")
             break;
-        cout << "Invalid city name.";
+        cout << "Invalid city name." << endl;
     }while(true);
 }
 
@@ -298,6 +305,43 @@ string chooseTag(string msg) {
     }while(true);
 }
 
+void showTransportOption(){
+    cout << "HOW DO YOU WANT TO GO TO YOUR DESTINATION: " << endl;
+    cout << "   [1] On foot" << endl;
+    cout << "   [2] Car" << endl;
+    cout << "   [3] Bus" << endl;
+    cout << "   [0] BACK" << endl;
+}
+
+void chooseTransport(){
+    unsigned int option;
+    do{
+        clear();
+        showTransportOption();
+        readInt(option, "Option");
+
+        switch(option){
+            case 1:
+                user.transport = onFoot;
+                return;
+            case 2:
+                user.transport = car;
+                return;
+            case 3:
+                user.transport = bus;
+                return;
+            case 0:
+                return;
+            default:
+                cout << "Invalid option..." << endl;
+                cout << "Press any key to continue ...";
+                getchar();
+                break;
+        }
+
+    }while(true);
+}
+
 //return number of preferences in path
 int checkIfPathHasUserPreferences(const vector<int>& path){
     int total = 0;
@@ -335,6 +379,7 @@ void showRecommendedPaths(vector<vector<int>> paths){
 void showTourOptions(){
     cout << "TOUR OPTIONS: " << endl;
     cout << "   [1] New Tour" << endl;
+    cout << "   [2] Select Transport" << endl;
     cout << "   [0] BACK" << endl;
 }
 
@@ -352,7 +397,7 @@ void tourOptions(){
                 askForCity(city);
 
                 cout << "Loading city graph..." << endl;
-                dataReader.readData(city, "",onFoot);
+                dataReader.readData(city, "",user.transport);
                 cout << "Graph loaded." << endl;
 
                 Graph g = dataReader.getGraph();
@@ -369,6 +414,10 @@ void tourOptions(){
                 cout << "Press any key to continue ...";
                 getchar();
             }
+                break;
+            case 2:
+                chooseTransport();
+                break;
             case 0:
                 return;
             default:
@@ -435,21 +484,21 @@ void chooseGraphOptions() {
         switch(option){
             case 1:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","4x4",onFoot);
+                dataReader.readData("","4x4",user.transport);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","8x8",onFoot);
+                dataReader.readData("","8x8",user.transport);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","16x16",onFoot);
+                dataReader.readData("","16x16",user.transport);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();

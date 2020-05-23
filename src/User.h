@@ -8,6 +8,7 @@
 #include <string>
 #include <list>
 #include "GraphBuilder/Vertex.h"
+#include "DataReader.h"
 
 using namespace std;
 
@@ -28,6 +29,7 @@ public:
     void setUserSP(Vertex * sp);
     void setUserEP(Vertex * ep);
 
+    Transport transport;
 private:
     list<string> preferences;
     string name;

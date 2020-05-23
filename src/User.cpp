@@ -12,6 +12,7 @@ User::User() {
     availableTime = 1;
     startPoint = nullptr;
     endPoint = nullptr;
+    transport = onFoot;
 }
 
 void User::addPreference(string preference) {
