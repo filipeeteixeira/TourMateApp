@@ -42,24 +42,23 @@ bool Graph::addBidirectionalEdge(const int &sourc, const int &dest, double w) {
     return true;
 }
 
-bool Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
+Edge * Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
     auto v1 = findVertex(sourc);
     auto v2 = findVertex(dest);
     if (v1 == NULL || v2 == NULL)
-        return false;
-    v1->removeEdge(v2);
+        return nullptr;
+
     //v2->removeEdge(v1);
-    return true;
+    return v1->removeEdge(v2);
 }
 
-void Graph::removeVertex(const int & vertexId)
+Vertex * Graph::removeVertex(const int & vertexId)
 {
-    for(int i = 0; i < vertexSet.size(); i++){
-        if(vertexSet[i]->id == vertexId) {
-            vertexSet.erase(vertexSet.begin() + i);
-            return;
-        }
+    auto i = vertexMap.find(vertexId);
+    if (i == vertexMap.end()) {
+        return nullptr;
     }
+    return vertexSet.at(i->second);
 }
 
 int Graph::getNumVertex() const {
@@ -136,13 +135,13 @@ void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
     while(!Q.empty()){
         Vertex *tmp = Q.extractMin();
         for (auto &w : tmp->adj){
-            if(w.dest->dist>tmp->dist + w.weight){
-                w.dest->dist=tmp->dist + w.weight;
-                w.dest->path=tmp;
-                if (!Q.inQueue(w.dest))
-                    Q.insert(w.dest);
+            if(w->dest->dist>tmp->dist + w->weight){
+                w->dest->dist=tmp->dist + w->weight;
+                w->dest->path=tmp;
+                if (!Q.inQueue(w->dest))
+                    Q.insert(w->dest);
                 else
-                    Q.decreaseKey(w.dest);
+                    Q.decreaseKey(w->dest);
 
             }
         }
@@ -163,7 +162,7 @@ void Graph::dfsVisit(Vertex *v, vector<int> & res) const {
     v->visited = true;
     res.push_back(v->getId());
     for(auto a: v->adj){
-        auto vert = a.dest;
+        auto vert = a->dest;
         if(!vert->visited) dfsVisit(vert,res);
     }
 }
@@ -187,9 +186,9 @@ bool Graph::stronglyConnected() {
 
     for (int i = 0; i < getNumVertex(); i++) {
         for (size_t j = 0; j < vertexSet.at(i)->adj.size(); j++) {
-            Gr.addVertex(vertexSet.at(i)->getAdj().at(j).getDest()->getId(), vertexSet.at(i)->getAdj().at(j).getDest()->getX(), vertexSet.at(i)->getAdj().at(j).getDest()->getY());
+            Gr.addVertex(vertexSet.at(i)->getAdj().at(j)->getDest()->getId(), vertexSet.at(i)->getAdj().at(j)->getDest()->getX(), vertexSet.at(i)->getAdj().at(j)->getDest()->getY());
             Gr.addVertex(vertexSet.at(i)->getId(), vertexSet.at(i)->getX(), vertexSet.at(i)->getY());
-            Gr.addBidirectionalEdge(vertexSet.at(i)->getAdj().at(j).getDest()->getId(), vertexSet.at(i)->getId(), vertexSet.at(i)->adj.at(j).weight);
+            Gr.addBidirectionalEdge(vertexSet.at(i)->getAdj().at(j)->getDest()->getId(), vertexSet.at(i)->getId(), vertexSet.at(i)->adj.at(j)->weight);
         }
     }
 
@@ -210,7 +209,7 @@ Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
     }
     else {
         for(auto a: origin->adj) {
-            auto vert = a.dest;
+            auto vert = a->dest;
             time += 2;
             if(time<=16)
                 path = dfsAllPaths(vert, dest);
@@ -303,9 +302,9 @@ double Graph::getPathTime(vector<int> path){
     double time = 0.0;
     for(int i=0; i < path.size() - 1; i++){
         for(auto edge: findVertex(path.at(i))->getAdj()) {
-            if(edge.getDest()->getId() == path.at(i))
+            if(edge->getDest()->getId() == path.at(i))
             {
-                time += edge.weight;
+                time += edge->weight;
                 break;
             }
         }
@@ -347,7 +346,7 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
         // traverse to all the nodes connected to
         // current vertex and push new path to queue
         for (auto & e : findVertexAlg(last)->getAdj()) {
-            auto w = e.dest;
+            auto w = e->dest;
             if (isNotVisited(w->getId(), path)) {
                 vector<int> newpath(path);
                 newpath.push_back(w->getId());
@@ -363,9 +362,9 @@ vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
     return paths;
 }
 
-vector<int> getNodes(vector<int> path, int start, int end){
+vector<int> Graph::getNodes(vector<int> path, int start, int end){
     vector<int>::const_iterator first = path.begin() + start;
-    vector<int>::const_iterator last =  path.begin() + end;
+    vector<int>::const_iterator last =  path.begin() + end + 1;
     vector<int> newVec(first, last);
     return newVec;
 }
@@ -378,16 +377,6 @@ struct Comparator{
 
 using PQ = priority_queue<Path*, vector<Path*>, Comparator>;
 
-vector<int> removeFirst(PQ &pq){
-    vector<int> res;
-    PQ pqAux = pq;
-    while(!pq.empty()){
-
-        pq.pop();
-    }
-    return res;
-}
-
 bool pathInPQ(Path *path, PQ pq){
     while(!pq.empty()){
         if(*path == *pq.top()){
@@ -397,6 +386,20 @@ bool pathInPQ(Path *path, PQ pq){
         pq.pop();
     }
     return false;
+}
+
+
+int Graph::path_cost(vector<int> path) {
+    int pathcost = 0;
+    if (path.size()>1)
+        for (int i=0; i<path.size()-1;i++) {
+               for(auto e : findVertex(path[i])->getAdj()) {
+                   if (e->getDest()->getId()==path[i+1]){
+                       pathcost+=e->getWeight();
+                   }
+               }
+        }
+    return pathcost;
 }
 
 vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
@@ -424,21 +427,25 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
 
     for(int k=1; k <= Kn; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
+            vector<Edge*> removed_edges = {};
+            vector<Vertex*> removed_vertices = {};
             int spurNode = A[k-1]->getPath().at(i);
 
             //build root path
             vector<int> rootNodes = getNodes(A[k-1]->getPath(), 0, i);
             Path * rootPath = new Path(rootNodes);
+            rootPath->setWeight(path_cost(rootNodes));
 
             for(auto path: A){
-                if(rootPath->getPath() == getNodes(path->getPath(), 0, i) && path->getPath().size() - 1 > i){
-                    removeBidirectionalEdge(path->getPath().at(i), path->getPath().at(i+1));
+                if(rootPath->getPath() == getNodes(path->getPath(), 0, i)){
+                    removed_edges.push_back(removeBidirectionalEdge(path->getPath().at(i), path->getPath().at(i+1)));
                 }
             }
 
+
             for(auto rootPathNode: rootPath->getPath()){
                 if(rootPathNode != spurNode)
-                    removeVertex(rootPathNode);
+                    removed_vertices.push_back(removeVertex(rootPathNode));
             }
 
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
@@ -448,7 +455,15 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
             if(!pathInPQ( totalPathP, B))
                 B.push(totalPathP);
 
-            vertexSet = auxVertexSet;
+
+            // Add back the edges and nodes that were removed from the graph.
+            for (Vertex* vertex: removed_vertices){
+                if (vertex != NULL) this->addVertex(vertex);
+            }
+
+            for (Edge* edge: removed_edges){
+                if (edge != NULL) this->addBidirectionalEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
+            }
         }
         if(B.empty())
             break;
@@ -459,5 +474,9 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
     }
 
    return A;
+}
+
+void Graph::addVertex(Vertex *vertex) {
+    vertexSet.push_back(vertex);
 }
 

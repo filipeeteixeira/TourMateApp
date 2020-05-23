@@ -13,6 +13,7 @@ class Path {
 private:
     vector <int> path;
     double weight;
+    vector<int>arestasw;
 
 public:
     Path(vector<int> path);

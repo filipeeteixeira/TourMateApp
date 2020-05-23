@@ -10,11 +10,13 @@
 class Vertex;
 
 class Edge {
+    Vertex *orig;
     Vertex *dest;      // destination vertex
     double weight;         // edge weight
 public:
-    Edge(Vertex *d, double w);
+    Edge(Vertex *orig, Vertex *d, double w);
     Vertex * getDest() const;
+    Vertex * getOrig() const;
     double getWeight() const;
     friend class Graph;
     friend class Vertex;

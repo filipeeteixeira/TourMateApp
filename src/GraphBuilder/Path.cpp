@@ -28,8 +28,8 @@ void Path::setWeight(double weight) {
 Path *Path::operator+(const Path *path1) {
     Path* res = new Path(*this);
     vector <int> temp = this->getPath();
-    for (auto v: path1->getPath())
-        temp.push_back(v);
+    for (int i=1;i <path1->getPath().size();i++)
+        temp.push_back(path1->getPath()[i]);
     res->setPath(temp);
     res->weight += path1->weight;
     return res;

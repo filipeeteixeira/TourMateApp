@@ -32,6 +32,7 @@ class Graph {
 public:
 	Vertex *findVertex(const int &id) const;
     Vertex *findVertexAlg(const int &id) const;
+    void addVertex(Vertex *vertex);
 	bool addVertex(const int &id, const double &x, const double &y);
 	bool addBidirectionalEdge(const int &sourc, const int &dest, double w);
 	int getNumVertex() const;
@@ -54,11 +55,15 @@ public:
 
     Path * getPathTo(int dest) const;
 
+    int path_cost(vector<int> path);
+
+    vector<int> getNodes(vector<int> path, int start, int end);
+
     vector<Path*> YenKSP(int src_id, int dest_id, int k);
 
-    bool removeBidirectionalEdge(const int &sourc, const int &dest);
+    Edge * removeBidirectionalEdge(const int &sourc, const int &dest);
 
-    void removeVertex(const int & vertexId);
+    Vertex * removeVertex(const int & vertexId);
 };
 
 #endif /* GRAPH_H_ */

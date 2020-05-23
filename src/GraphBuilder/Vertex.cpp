@@ -52,7 +52,7 @@ bool Vertex::operator==(const Vertex &rhs) const {
     return id==rhs.id;
 }
 
-vector<Edge> Vertex::getAdj() const{
+vector<Edge *> Vertex::getAdj() const{
     return adj;
 }
 
@@ -61,16 +61,20 @@ double Vertex::getDist() const{
 }
 
 void Vertex::addEdge(Vertex *dest, double w) {
-    adj.emplace_back(dest, w);
+    adj.push_back(new Edge(this,dest,w));
 }
 
-void Vertex::removeEdge(Vertex *dest) {
+Edge* Vertex::removeEdge(Vertex *dest) {
+    Edge *auxE = nullptr;
     for(int i=0; i<adj.size(); i++){
-        if(adj.at(i).getDest() == dest) {
-            //adj.erase(adj.begin() + i); return;
-            adj.at(i).weight = 1000000; return;
+        if(adj.at(i)->getDest() == dest) {
+            auxE = adj.at(i);
+            adj.erase(adj.begin() + i);
+            return auxE;
+            //adj.at(i).weight = 1000000; return;
         }
     }
+    return auxE;
 }
 
 

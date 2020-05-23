@@ -191,8 +191,8 @@ void DataReader::displayGraph() {
 
             int id = 0;
             for (Vertex* vertex : graph.getVertexSet()) {
-                for (Edge edge : vertex->getAdj()) {
-                    graphViewer->addEdge(id, vertex->getId(), edge.getDest()->getId(), EdgeType::UNDIRECTED);
+                for (auto edge : vertex->getAdj()) {
+                    graphViewer->addEdge(id, vertex->getId(), edge->getDest()->getId(), EdgeType::UNDIRECTED);
                     graphViewer->setEdgeLabel(id, "");
                     id++;
                 }
@@ -205,7 +205,7 @@ void DataReader::displayGraph() {
                 graphViewer->addNode(vertex->getId(), vertex->getX(), vertex->getY());
                 graphViewer->setVertexLabel(vertex->getId(), to_string(vertex->getId()));
                 for (auto edge : vertex->getAdj())
-                    graphViewer->addEdge(edgeID++, vertex->getId(), edge.getDest()->getId(), EdgeType::DIRECTED);
+                    graphViewer->addEdge(edgeID++, vertex->getId(), edge->getDest()->getId(), EdgeType::DIRECTED);
             }
 
         }
