@@ -81,7 +81,7 @@ string toLower(string const str){
 }
 
 void outputHoursAndMinutes(double time){
-    if(time > 1){
+    if(time >= 1){
         cout<<(int) time<< " hours and ";
         cout<< (int)((time - (int)time) * 60)<< " minutes";
     }

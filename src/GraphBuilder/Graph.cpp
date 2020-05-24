@@ -389,8 +389,8 @@ bool pathInPQ(Path *path, PQ pq){
 }
 
 
-int Graph::path_cost(vector<int> path) {
-    int pathcost = 0;
+double Graph::path_cost(vector<int> path) {
+    double pathcost = 0;
     if (path.size()>1)
         for (int i=0; i<path.size()-1;i++) {
                for(auto e : findVertex(path[i])->getAdj()) {
@@ -451,11 +451,13 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
 
             // Add back the edges and nodes that were removed from the graph.
             for (Vertex* vertex: removed_vertices){
-                if (vertex != NULL) this->addVertex(vertex);
+                if (vertex != NULL)
+                    this->addVertex(vertex);
             }
 
             for (Edge* edge: removed_edges){
-                if (edge != NULL) this->addBidirectionalEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
+                if (edge != NULL)
+                    this->addBidirectionalEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
             }
         }
         if(B.empty())

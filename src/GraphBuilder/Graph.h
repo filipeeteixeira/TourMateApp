@@ -55,7 +55,7 @@ public:
 
     Path * getPathTo(int dest) const;
 
-    int path_cost(vector<int> path);
+    double path_cost(vector<int> path);
 
     vector<int> getNodes(vector<int> path, int start, int end);
 

@@ -324,6 +324,7 @@ void showRecommendedPaths(vector<Path*> paths){
     for(Path *path: paths){
         cout << "["<< i+1 <<"] " << endl
         << "Expected Time: " ;
+        cout<<path->getWeight()<<endl;
         outputHoursAndMinutes(path->getWeight());
         cout << endl;
         cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
@@ -356,7 +357,7 @@ void tourOptions(){
                 askForCity(city);
 
                 cout << "Loading city graph..." << endl;
-                dataReader.readData(city, "",onFoot);
+                dataReader.readData(city, "",user.transport);
                 cout << "Graph loaded." << endl;
 
                 Graph g = dataReader.getGraph();
