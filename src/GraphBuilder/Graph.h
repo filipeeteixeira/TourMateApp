@@ -12,6 +12,7 @@
 #include "Vertex.h"
 #include "Edge.h"
 #include "Path.h"
+#include "../User.h"
 
 #include <unistd.h>
 #include <unordered_map>
@@ -43,7 +44,7 @@ public:
 	void printAllPaths(Vertex* origin, Vertex* dest);
     Vertex *initSingleSource(const int &origin);
     bool relax(Vertex *v, Vertex *w, double weight);
-    void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
+    void dijkstraShortestPath(const Vertex &origin, const Vertex &dest, Transport transport);
     vector<int> dfs() const;
     bool stronglyConnected();
 
@@ -59,7 +60,7 @@ public:
 
     vector<int> getNodes(vector<int> path, int start, int end);
 
-    vector<Path*> YenKSP(int src_id, int dest_id, int k);
+    vector<Path*> YenKSP(int src_id, int dest_id, double k, Transport transport);
 
     Edge * removeBidirectionalEdge(const int &sourc, const int &dest);
 

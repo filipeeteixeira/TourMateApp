@@ -6,6 +6,7 @@
 #include <utility>
 #include "Vertex.h"
 #include "Graph.h"
+#include "../User.h"
 
 Vertex * Graph::findVertex(const int &id) const {
     auto i = vertexMap.find(id);
@@ -121,7 +122,7 @@ Path *Graph::getPathTo(int dest) const{
  * Dijkstra algorithm.
  */
 
-void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
+void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest, Transport transport) {
     for (auto &v : vertexSet){
         v->dist=INF;
         v->path= NULL;
@@ -134,7 +135,14 @@ void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
 
     while(!Q.empty()){
         Vertex *tmp = Q.extractMin();
-        for (auto &w : tmp->adj){
+        vector<Edge*> adj;
+        if(transport == bus){
+            adj = tmp->adj_stcp;
+        }
+        else{
+            adj = tmp->adj;
+        }
+        for (auto &w : adj){
             if(w->dest->dist>tmp->dist + w->weight){
                 w->dest->dist=tmp->dist + w->weight;
                 w->dest->path=tmp;
@@ -148,7 +156,6 @@ void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
     }
 }
 /*
- *
  * returns id of transport stop
  */
 int Graph::dijkstraShortestPathToTransport(const Vertex &origin) {
@@ -427,16 +434,16 @@ double Graph::path_cost(vector<int> path) {
     return pathcost;
 }
 
-vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
+vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, Transport transport){
     vector<Path *> A;
-    dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
+    dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id), transport);
     if(getPathTo(dest_id)->getWeight() > maxTime)
         return A;
 
     A.push_back(getPathTo(dest_id));
     PQ B;
 
-    // Limited to the calculation to 5 paths to avoid possible higher temporal complexities
+    // Limited to the calculation to 10 paths to avoid possible higher temporal complexities
     for(int k=1; k <= 10; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
@@ -452,7 +459,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
                 }
             }
 
-            dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
+            dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id), transport);
             Path *spurPath =  getPathTo(dest_id); //getPathTo ja calcula o weight
 
             if(spurPath!= nullptr) {

@@ -381,11 +381,11 @@ void tourOptions(){
                     int transportEP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserEP());
                     transportToDest =  dataReader.getGraph().getPathTo(transportEP);
 
-                    dataReader.getGraph().YenKSP(transportSP, transportEP, user.getAvailableTime());
+                    dataReader.getGraph().YenKSP(transportSP, transportEP, user.getAvailableTime(), user.transport);
 
                 }
                 else
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime(), user.transport));
 
                 cout << "Press any key to continue ...";
                 getchar();
