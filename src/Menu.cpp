@@ -367,6 +367,7 @@ void tourOptions(){
                     cout << "Graph Strongly Connected: " << "Yes" << endl;
                 else
                     cout << "Graph Strongly Connected: " << "No" << endl;
+                sleep(2);
 
                 getStartPoint(user, dataReader,chooseTag("Where are you"));
                 getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));

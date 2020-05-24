@@ -22,7 +22,7 @@ public:
     void setName(string newName);
     void setAge(int newAge);
     list<string> getPreferences() const;
-    unsigned int getAvailableTime() const;
+    double getAvailableTime() const;
 
     Vertex * getUserSP();
     Vertex * getUserEP();
@@ -35,7 +35,7 @@ private:
     list<string> preferences;
     string name;
     unsigned int age;
-    unsigned int availableTime;
+    double availableTime;
     Vertex * startPoint;
     Vertex * endPoint;
 };
