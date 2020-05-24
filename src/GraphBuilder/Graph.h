@@ -64,6 +64,8 @@ public:
     Edge * removeBidirectionalEdge(const int &sourc, const int &dest);
 
     Vertex * removeVertex(const int & vertexId);
+
+    int dijkstraShortestPathToTransport(const Vertex &origin);
 };
 
 #endif /* GRAPH_H_ */

@@ -147,6 +147,31 @@ void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
         }
     }
 }
+/*
+ *
+ * returns id of transport stop
+ */
+int Graph::dijkstraShortestPathToTransport(const Vertex &origin) {
+    auto s = initSingleSource(origin.getId());
+    MutablePriorityQueue<Vertex> q;
+    q.insert(s);
+    while( !q.empty()) {
+        auto v = q.extractMin();
+        for(auto e : v->adj) {
+            auto oldDist = e->dest->dist;
+            if(e->dest->getTag() == "stcp") {
+                return e->dest->getDist();
+            }
+            if (relax(v, e->dest, e->weight)) {
+                if (oldDist == INF)
+                    q.insert(e->dest);
+                else
+                    q.decreaseKey(e->dest);
+            }
+        }
+    }
+    return -1;
+}
 
 vector<int> Graph::dfs() const {
     vector<int> res;
@@ -371,7 +396,7 @@ vector<int> Graph::getNodes(vector<int> path, int start, int end){
 
 struct Comparator{
     bool operator () (const Path *p1, const Path *p2) {
-        return p1->getWeight()>p2->getWeight();
+        return p1->getWeight()<p2->getWeight();
     }
 };
 

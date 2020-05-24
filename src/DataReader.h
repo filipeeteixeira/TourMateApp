@@ -13,6 +13,8 @@ class DataReader {
     string nodesFilenameLatLon;
     string edgesFilename;
     string tagsFilename;
+    string metroFilename;
+    string stcpFilename;
     int width,height;
 
     bool realMaps;

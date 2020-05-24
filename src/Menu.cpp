@@ -370,7 +370,17 @@ void tourOptions(){
                 getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
 
                 cout << "Finding the best path for you..." << endl;
-                showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
+
+                if(user.transport == bus){
+                    Path* sourceToTransport;
+                    Path* transportToDest;
+                    int transportSP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserSP());
+                    sourceToTransport =  dataReader.getGraph().getPathTo(transportSP);
+                    int transportEP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserEP());
+                    transportToDest =  dataReader.getGraph().getPathTo(transportEP);
+                }
+                else
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
 
                 cout << "Press any key to continue ...";
                 getchar();

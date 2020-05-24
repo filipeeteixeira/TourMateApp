@@ -292,6 +292,8 @@ void DataReader::setFiles(string city, string gridGraph){
         nodesFilenameLatLon = "../res/NewMaps/Porto/porto_strong_nodes_latlng.txt";
         edgesFilename = "../res/NewMaps/Porto/porto_strong_edges.txt";
         tagsFilename = "../res/NewMaps/Porto/porto_tags.txt";
+        stcpFilename = "../res/TagExamples/Porto/porto_tags.txt";
+        metroFilename = "../res/TagExamples/Porto/porto_tags.txt";
     }
     else{
         nodesFilenameXY = "../res/GridGraphs/" + gridGraph + "/nodes.txt";

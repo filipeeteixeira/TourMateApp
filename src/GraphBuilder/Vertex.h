@@ -27,6 +27,8 @@ class Vertex {
 
     double dist = 0;
     vector<Edge *> adj;		// outgoing edges
+    vector<Edge *> adj_metro;
+    vector<Edge *> adj_stcp;
     Vertex* path;
     vector<Vertex *>paths;
     vector<int>time;
