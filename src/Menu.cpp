@@ -378,6 +378,9 @@ void tourOptions(){
                     sourceToTransport =  dataReader.getGraph().getPathTo(transportSP);
                     int transportEP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserEP());
                     transportToDest =  dataReader.getGraph().getPathTo(transportEP);
+
+                    dataReader.getGraph().YenKSP(transportSP, transportEP, user.getAvailableTime());
+
                 }
                 else
                     showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
