@@ -8,10 +8,10 @@
 #include <string>
 #include <list>
 #include "GraphBuilder/Vertex.h"
-#include "DataReader.h"
-
 
 using namespace std;
+
+enum Transport {onFoot, car, bus};
 
 class User {
 public:

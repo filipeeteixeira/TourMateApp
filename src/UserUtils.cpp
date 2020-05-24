@@ -38,14 +38,13 @@ void getStartPoint(User &user, DataReader &dataReader, string startTag) {
 
     //dataReader.getGraphViewer()->closeWindow();
     user.setUserSP(tags.at(startPoint));
-    cout << user.getUserSP()->getId()<< endl;
     //delete dataReader.getGraphViewer();
 }
 
 void getEndPoint(User &user, DataReader &dataReader, string endTag) {
     cout << "Loading..." << endl;
     //dataReader.displayGraph();
-    cout << user.getUserSP()->getId()<< endl;
+    //cout << user.getUserSP()->getId()<< endl;
 
     vector<Vertex*> tags;
     for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
@@ -55,11 +54,11 @@ void getEndPoint(User &user, DataReader &dataReader, string endTag) {
             tags.push_back(vertex);
     }
 
+    showTags(dataReader.getGraphViewer(), tags);
+
     dataReader.getGraphViewer()->setVertexColor(user.getUserSP()->getId(),"green");
     dataReader.getGraphViewer()->setVertexSize(user.getUserSP()->getId(),20);
     dataReader.getGraphViewer()->setVertexLabel(user.getUserSP()->getId(),"START");
-
-    showTags(dataReader.getGraphViewer(), tags);
 
     dataReader.getGraphViewer()->rearrange();
 
@@ -72,6 +71,11 @@ void getEndPoint(User &user, DataReader &dataReader, string endTag) {
         cout << "Invalid point." << endl;
     }while(true);
 
-    dataReader.getGraphViewer()->closeWindow();
+    //dataReader.getGraphViewer()->closeWindow();
     user.setUserEP(tags.at(endPoint));
+
+    for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
+        dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 1);
+        dataReader.getGraphViewer()->clearVertexLabel(vertex->getId());
+    }
 }

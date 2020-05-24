@@ -168,6 +168,11 @@ GraphViewer * DataReader::getGraphViewer() {
 }
 
 void DataReader::displayGraph() {
+    if (this->graphViewer!= nullptr){
+        this->graphViewer->closeWindow();
+        delete this->graphViewer;
+    }
+
     this->graphViewer= new GraphViewer(width, height, false);
     if(!nodesFilenameXY.empty()) {
         graphViewer->createWindow(width, height);
@@ -213,6 +218,57 @@ void DataReader::displayGraph() {
         sleep(2);
     }
     //delete graphViewer;
+}
+
+void DataReader::showPath(Path *path, User &user){
+
+    /*this->graphViewer= new GraphViewer(width, height, false);
+    graphViewer->createWindow(width, height);
+    graphViewer->defineVertexColor("black");
+    graphViewer->defineEdgeColor("black");
+    graphViewer->defineEdgeCurved(false);*/
+
+    int id =0;
+    for(auto v: graph.getVertexSet()){
+        for (auto e : v->getAdj()) {
+            graphViewer->removeEdge(id);
+            id++;
+        }
+    }
+
+    Vertex * tmpVertex= nullptr;
+    for (int i=0; i<path->getPath().size();i++) {
+        graphViewer->setVertexColor(path->getPath()[i], "YELLOW");
+        graphViewer->setVertexSize(path->getPath()[i], 10);
+        for( auto &up : user.getPreferences()){
+            tmpVertex = graph.findVertex(path->getPath()[i]);
+            if(tmpVertex->getTag()== up){
+                graphViewer->setVertexSize(tmpVertex->getId(), 10);
+                graphViewer->setVertexColor(tmpVertex->getId(), "BLUE");
+            }
+        }
+
+    }
+
+    id = 0;
+    bool add;
+    for (Vertex* vertex : graph.getVertexSet()) {
+        for (auto edge : vertex->getAdj()) {
+                graphViewer->addEdge(id, vertex->getId(), edge->getDest()->getId(), EdgeType::UNDIRECTED);
+                graphViewer->setEdgeColor(id, "gray");
+                graphViewer->setEdgeLabel(id, "");
+                id++;
+        }
+    }
+
+    for (int i = 0; i < path->getPath().size()-1; i++) {
+        graphViewer->addEdge(id, path->getPath()[i], path->getPath()[i+1], EdgeType::DIRECTED);
+        graphViewer->setEdgeColor(id, "ORANGE");
+        graphViewer->setEdgeThickness(id, 10);
+        id++;
+    }
+
+    graphViewer->rearrange();
 }
 
 void DataReader::readData(string city, string gridGraph, Transport transport) { //só para debug depois fica só a cidade

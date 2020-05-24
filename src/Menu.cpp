@@ -321,10 +321,10 @@ void showRecommendedPaths(vector<Path*> paths){
     if(paths.empty())
         cout << "No recommendations found..." << endl;
     sortByUserPreferences(paths);
+    dataReader.showPath(paths[0], user);
     for(Path *path: paths){
         cout << "["<< i+1 <<"] " << endl
         << "Expected Time: " ;
-        cout<<path->getWeight()<<endl;
         outputHoursAndMinutes(path->getWeight());
         cout << endl;
         cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
@@ -369,6 +369,7 @@ void tourOptions(){
                 getStartPoint(user, dataReader,chooseTag("Where are you"));
                 getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
 
+                cout << "Finding the best path for you..." << endl;
                 showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
 
                 cout << "Press any key to continue ...";

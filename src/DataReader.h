@@ -4,10 +4,9 @@
 #include <string>
 #include <graphviewer.h>
 #include "GraphBuilder/Graph.h"
+#include "User.h"
 
 using namespace std;
-
-enum Transport {onFoot, car, bus};
 
 class DataReader {
     string nodesFilenameXY;
@@ -41,6 +40,8 @@ class DataReader {
         void setRealMaps(bool rm);
 
         GraphViewer * getGraphViewer();
+
+        void showPath( Path *path, User &user);
 };
 
 #endif //TOURMATEAPP_DATAREADER_H
