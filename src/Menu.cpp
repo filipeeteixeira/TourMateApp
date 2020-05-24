@@ -318,8 +318,10 @@ void sortByUserPreferences(vector<Path*> & paths){
 void showRecommendedPaths(vector<Path*> paths){
     cout << "Loading recommendations..." << endl;
     int i = 0;
-    if(paths.empty())
+    if(paths.empty()){
         cout << "No recommendations found..." << endl;
+        return;
+    }
     sortByUserPreferences(paths);
     dataReader.showPath(paths[0], user);
     for(Path *path: paths){

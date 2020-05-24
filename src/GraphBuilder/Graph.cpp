@@ -427,27 +427,21 @@ double Graph::path_cost(vector<int> path) {
     return pathcost;
 }
 
-vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
+vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
     vector<Path *> A;
-
-    // Determine the shortest path from the source to the sink.
-    //-> A[0] = Dijkstra(Graph, source, sink);
     dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
+    if(getPathTo(dest_id)->getWeight() > maxTime)
+        return A;
+
     A.push_back(getPathTo(dest_id));
-    // Initialize the set to store the potential kth shortest path.
     PQ B;
-    // -> B = [];
 
-    vector<Vertex*> auxVertexSet(vertexSet);
-
-
-    for(int k=1; k <= Kn; k++){
+    // Limited to the calculation to 5 paths to avoid possible higher temporal complexities
+    for(int k=1; k <= 10; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
-            vector<Vertex*> removed_vertices = {};
-            int spurNode = A[k-1]->getPath().at(i);
 
-            //build root path
+            int spurNode = A[k-1]->getPath().at(i);
             vector<int> rootNodes = getNodes(A[k-1]->getPath(), 0, i);
             Path * rootPath = new Path(rootNodes);
             rootPath->setWeight(path_cost(rootNodes));
@@ -456,12 +450,6 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
                 if(rootPath->getPath() == getNodes(path->getPath(), 0, i) && path->getPath().size() - 1 > i){
                     removed_edges.push_back(removeBidirectionalEdge(path->getPath().at(i), path->getPath().at(i+1)));
                 }
-            }
-
-
-            for(auto rootPathNode: rootPath->getPath()){
-                if(rootPathNode != spurNode)
-                    removed_vertices.push_back(removeVertex(rootPathNode));
             }
 
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
@@ -473,27 +461,20 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, int Kn){
                     B.push(totalPathP);
             }
 
-
-            // Add back the edges and nodes that were removed from the graph.
-            for (Vertex* vertex: removed_vertices){
-                if (vertex != NULL)
-                    this->addVertex(vertex);
-            }
-
             for (Edge* edge: removed_edges){
                 if (edge != NULL)
                     this->addBidirectionalEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
             }
         }
-        if(B.empty())
+
+        if(B.empty() || B.top()->getWeight() > maxTime)
             break;
 
-        //B.sort();
         A.push_back(B.top());
         B.pop();
     }
 
-   return A;
+    return A;
 }
 
 void Graph::addVertex(Vertex *vertex) {
