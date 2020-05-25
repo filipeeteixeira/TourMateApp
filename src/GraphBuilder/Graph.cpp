@@ -331,8 +331,8 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
     A.push_back(getPathTo(dest_id));
     PQ B;
 
-    // Limited to the calculation to 10 paths to avoid possible higher temporal complexities
-    for(int k=1; k <= 50; k++){
+    // Limited to the calculation to 15 paths to avoid possible higher temporal complexities
+    for(int k=1; k <= 15; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
 
