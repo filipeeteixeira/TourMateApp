@@ -338,7 +338,7 @@ vector<int> Graph::getNodes(vector<int> path, int start, int end){
 
 struct Comparator{
     bool operator () (const Path *p1, const Path *p2) {
-        return p1->getWeight()<p2->getWeight();
+        return p1->getWeight()>p2->getWeight();
     }
 };
 
