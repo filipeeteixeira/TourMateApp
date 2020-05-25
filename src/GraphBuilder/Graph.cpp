@@ -59,6 +59,14 @@ vector<Vertex *> Graph::getVertexSet() const {
     return vertexSet;
 }
 
+vector<int> Graph::getMetroNodes() {
+    return metroNodes;
+}
+
+void Graph::addMetroNodes(int node) {
+    metroNodes.push_back(node);
+}
+
 
 /**
 * Initializes single-source shortest path data (path, dist).
@@ -107,8 +115,10 @@ Path *Graph::getPathTo(int dest) const{
 
 }
 
-/**
- * Dijkstra algorithm.
+/*
+ * ================================================================================================
+ * DIJKSTRA ALGORITHM
+ * ================================================================================================
  */
 
 void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
@@ -161,6 +171,12 @@ int Graph::dijkstraShortestPathToTransport(const Vertex &origin) {
     }
     return -1;
 }
+
+/*
+ * ================================================================================================
+ * DFS ALGORITHM
+ * ================================================================================================
+ */
 
 vector<int> Graph::dfs() const {
     vector<int> res;
@@ -281,6 +297,12 @@ Now run a loop till queue is not empty
          b) insert this new path to queue
  * */
 
+/*
+ * ================================================================================================
+ * YEN'S ALGORITHM
+ * ================================================================================================
+ */
+
 vector<int> Graph::getNodes(vector<int> path, int start, int end){
     vector<int>::const_iterator first = path.begin() + start;
     vector<int>::const_iterator last =  path.begin() + end + 1;
@@ -376,13 +398,5 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
     }
 
     return A;
-}
-
-vector<int> Graph::getMetroNodes() {
-    return metroNodes;
-}
-
-void Graph::addMetroNodes(int node) {
-    metroNodes.push_back(node);
 }
 
