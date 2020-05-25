@@ -25,17 +25,6 @@ Vertex * Graph::findVertexAlg(const int &id) const {
     return nullptr;
 }
 
-Edge * Graph::findEdge(const int &source, const int &dest) const {
-    for (auto v : vertexSet){
-        for (auto e : v->getAdj()){
-            if (e->getOrig()->getId()==source and e->getDest()->getId()==dest){
-                return e;
-            }
-        }
-    }
-    return nullptr;
-}
-
 bool Graph::addVertex(const int &id, const double &x, const double &y) {
     if ( findVertex(id) != NULL)
         return false;
@@ -44,23 +33,21 @@ bool Graph::addVertex(const int &id, const double &x, const double &y) {
     return true;
 }
 
-bool Graph::addBidirectionalEdge(const int &sourc, const int &dest, double w) {
+bool Graph::addEdge(const int &sourc, const int &dest, double w) {
     auto v1 = findVertex(sourc);
     auto v2 = findVertex(dest);
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->addEdge(v2,w);
-    //v2->addEdge(v1,w);
     return true;
 }
 
-Edge * Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
+Edge * Graph::removeEdge(const int &sourc, const int &dest) {
     auto v1 = findVertex(sourc);
     auto v2 = findVertex(dest);
     if (v1 == NULL || v2 == NULL)
         return nullptr;
 
-    //v2->removeEdge(v1);
     return v1->removeEdge(v2);
 }
 
@@ -215,7 +202,7 @@ bool Graph::stronglyConnected() {
         for (size_t j = 0; j < vertexSet.at(i)->adj.size(); j++) {
             Gr.addVertex(vertexSet.at(i)->getAdj().at(j)->getDest()->getId(), vertexSet.at(i)->getAdj().at(j)->getDest()->getX(), vertexSet.at(i)->getAdj().at(j)->getDest()->getY());
             Gr.addVertex(vertexSet.at(i)->getId(), vertexSet.at(i)->getX(), vertexSet.at(i)->getY());
-            Gr.addBidirectionalEdge(vertexSet.at(i)->getAdj().at(j)->getDest()->getId(), vertexSet.at(i)->getId(), vertexSet.at(i)->adj.at(j)->weight);
+            Gr.addEdge(vertexSet.at(i)->getAdj().at(j)->getDest()->getId(), vertexSet.at(i)->getId(), vertexSet.at(i)->adj.at(j)->weight);
         }
     }
 
@@ -277,27 +264,6 @@ void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
         printAllPaths(origin, dest);
 }
 
-//-------------------------------------------------------
-// utility function for printing
-// the found path in graph
-void printpath(vector<int>& path)
-{
-    int size = path.size();
-    for (int i = 0; i < size; i++)
-        cout << path[i] << " ";
-    cout << endl;
-}
-
-// utility function to check if current
-// vertex is already present in path
-int isNotVisited(int x, vector<int>& path)
-{
-    int size = path.size();
-    for (int i = 0; i < size; i++)
-        if (path[i] == x)
-            return 0;
-    return 1;
-}
 /*
  *
  *
@@ -314,20 +280,6 @@ Now run a loop till queue is not empty
              append this vertex
          b) insert this new path to queue
  * */
-
-double Graph::getPathTime(vector<int> path){
-    double time = 0.0;
-    for(int i=0; i < path.size() - 1; i++){
-        for(auto edge: findVertex(path.at(i))->getAdj()) {
-            if(edge->getDest()->getId() == path.at(i))
-            {
-                time += edge->weight;
-                break;
-            }
-        }
-    }
-    return time;
-}
 
 vector<int> Graph::getNodes(vector<int> path, int start, int end){
     vector<int>::const_iterator first = path.begin() + start;
@@ -384,35 +336,41 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
 
-            int spurNode = A[k-1]->getPath().at(i);
-            vector<int> rootNodes = getNodes(A[k-1]->getPath(), 0, i);
+            int spurNode = A[k-1]->getPath().at(i); //encontrar o no a fixar
+            vector<int> rootNodes = getNodes(A[k-1]->getPath(), 0, i); //encontrar o rootPath apartir do caminho encontrado pelo dijkstra
             Path * rootPath = new Path(rootNodes);
-            rootPath->setWeight(path_cost(rootNodes));
+            rootPath->setWeight(path_cost(rootNodes)); //calcular o peso do rootPath e atribui-lo
 
+            //eliminar edges para o dijkstra poder encontrar outros caminhos alternativos
             for(auto path: A){
                 if(rootPath->getPath() == getNodes(path->getPath(), 0, i) && path->getPath().size() - 1 > i){
-                    removed_edges.push_back(removeBidirectionalEdge(path->getPath().at(i), path->getPath().at(i+1)));
+                    removed_edges.push_back(removeEdge(path->getPath().at(i), path->getPath().at(i+1)));
                 }
             }
 
+            //Calcular dijkstra para o grafo sem as arestas removidas
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
             Path *spurPath =  getPathTo(dest_id); //getPathTo ja calcula o weight
 
+            //caso o spurPath seja nulo não queremos adicionar o totalPath uma vez que isso significa que o vertice de destino nao tem ligação com os restantes
             if(spurPath!= nullptr) {
                 Path *totalPathP = *rootPath + spurPath;
                 if (!pathInPQ(totalPathP, B))
                     B.push(totalPathP);
             }
 
+            //Adicionar de volta as arestas removidas do grafo
             for (Edge* edge: removed_edges){
                 if (edge != NULL)
-                    this->addBidirectionalEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
+                    this->addEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
             }
         }
 
-        if(B.empty() || B.top()->getWeight() > maxTime)
+        //se B estiver vazio quer dizer que já não há mais caminhos possiveis
+        if(B.empty() || B.top()->getWeight() > maxTime) // se o caminho retirado de B tiver um peso maior que o input do utilizador deixamos de calcular caminhos alternativos
             break;
 
+        //Adicionar o melhor caminho a A
         A.push_back(B.top());
         B.pop();
     }
