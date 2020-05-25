@@ -40,7 +40,7 @@ void User::setAge(int newAge) {
     age = newAge;
 }
 
-unsigned int User::getAvailableTime() const {
+double User::getAvailableTime() const {
     return availableTime;
 }
 
