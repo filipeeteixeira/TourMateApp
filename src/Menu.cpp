@@ -355,8 +355,8 @@ void tourOptions(){
                 user.setAvailableTime(time);
                 chooseTransport();
                 clear();
-                cout << "Select the city to make a tour" << endl;
-                askForCity(city);
+                //cout << "Select the city to make a tour" << endl;
+                //askForCity(city);
 
                 cout << "Loading city graph..." << endl;
                 dataReader.readData(city, "",user.transport);
@@ -410,7 +410,7 @@ void showTransportOption(){
     cout << "HOW DO YOU WANT TO GO TO YOUR DESTINATION: " << endl;
     cout << "   [1] On foot" << endl;
     cout << "   [2] Car" << endl;
-    cout << "   [3] Mestro" << endl;
+    cout << "   [3] Metro" << endl;
 }
 
 void chooseTransport(){
