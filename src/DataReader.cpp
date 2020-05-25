@@ -120,9 +120,9 @@ void DataReader::readEdges(Transport transport) {
                     graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
                             graph.findVertex(pointB)) / 50.0);
                     break;
-                case bus:
+                case metro:
                     graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
-                            graph.findVertex(pointB)) / 16.0);
+                            graph.findVertex(pointB)) / 4.5); //todas as arestas que nao sao metro (o user vai andar a pe)
                     break;
             }
         }
@@ -156,6 +156,43 @@ void DataReader::readTags() {
             Vertex *v = graph.findVertex(stoi(line));
             v->setTag(tag);
         }
+    }
+}
+
+void DataReader::readMetro() {
+    ifstream metroFile(this->metroFilename);
+
+    string line;
+    string stationName;
+    string tmp;
+    int stationNode, nextStationNode;
+
+    getline(metroFile,line);
+    int numStations = stoi(line);
+
+    stringstream ssline(line);
+
+    for (int i = 0; i < numStations; i++) {
+        getline(metroFile, tmp,'(');
+        getline(metroFile, tmp,',');
+        stationNode=stoi(tmp);
+
+        getline(metroFile, tmp,',');
+        stationName=tmp;
+
+        getline(metroFile, tmp,')');
+        nextStationNode = stoi(tmp);
+
+        Vertex *v = graph.findVertex(stationNode);
+        graph.addMetroNodes(v->getId());
+        v->setTag(stationName);
+        v->setStation(true);
+        if (nextStationNode!=0) {
+            Vertex *v2 = graph.findVertex(nextStationNode);
+
+            v->addEdjeStation(v, v2, v->distance(v2) / 30.0);
+        }
+
     }
 }
 
@@ -222,12 +259,6 @@ void DataReader::displayGraph() {
 
 void DataReader::showPath(Path *path, User &user){
 
-    /*this->graphViewer= new GraphViewer(width, height, false);
-    graphViewer->createWindow(width, height);
-    graphViewer->defineVertexColor("black");
-    graphViewer->defineEdgeColor("black");
-    graphViewer->defineEdgeCurved(false);*/
-
     int id =0;
     for(auto v: graph.getVertexSet()){
         for (auto e : v->getAdj()) {
@@ -249,11 +280,28 @@ void DataReader::showPath(Path *path, User &user){
         }
 
     }
+    /*--------------- show metro ---------------*/
+    if(user.transport==metro) {
+        for (int i = 0; i < graph.getMetroNodes().size(); i++) {
+            graphViewer->setVertexColor(graph.getMetroNodes()[i], "PINK");
+            graphViewer->setVertexSize(graph.getMetroNodes()[i], 10);
+        }
 
-    id = 0;
-    bool add;
+        id = 0;
+        for (auto idNode : graph.getMetroNodes()) {
+            for (auto e : graph.findVertex(idNode)->getAdjStcp()) {
+                graphViewer->addEdge(id, e->getOrig()->getId(), e->getDest()->getId(), EdgeType::UNDIRECTED);
+                graphViewer->setEdgeColor(id, "PINK");
+                graphViewer->setEdgeThickness(id, 10);
+                id++;
+            }
+        }
+    }
+    /* ---------------------*/
+
     for (Vertex* vertex : graph.getVertexSet()) {
         for (auto edge : vertex->getAdj()) {
+                graphViewer->removeEdge(id);
                 graphViewer->addEdge(id, vertex->getId(), edge->getDest()->getId(), EdgeType::UNDIRECTED);
                 graphViewer->setEdgeColor(id, "gray");
                 graphViewer->setEdgeLabel(id, "");
@@ -262,6 +310,7 @@ void DataReader::showPath(Path *path, User &user){
     }
 
     for (int i = 0; i < path->getPath().size()-1; i++) {
+        graphViewer->removeEdge(id);
         graphViewer->addEdge(id, path->getPath()[i], path->getPath()[i+1], EdgeType::DIRECTED);
         graphViewer->setEdgeColor(id, "ORANGE");
         graphViewer->setEdgeThickness(id, 10);
@@ -275,25 +324,22 @@ void DataReader::readData(string city, string gridGraph, Transport transport) { 
     this->graph = Graph();
 
     this->setFiles(city, gridGraph);
+
     this->readNodes();
     this->readEdges(transport);
-    if(realMaps)
+    if(realMaps) {
         this->readTags();
+        this->readMetro();
+    }
 }
 
 void DataReader::setFiles(string city, string gridGraph){
     if (realMaps) {
-        /*nodesFilenameXY = "../res/PortugalMaps/" + city + "/nodes_x_y_" + toLower(city) + ".txt";
-        nodesFilenameLatLon = "../res/PortugalMaps/" + city + "/nodes_lat_lon_" + toLower(city) + ".txt";
-        edgesFilename = "../res/PortugalMaps/" + city + "/edges_" + toLower(city) + ".txt";
-        tagsFilename = "../res/TagExamples/" + city + "/t03_tags_" + toLower(city) + ".txt";*/
-
         nodesFilenameXY = "../res/NewMaps/Porto/porto_strong_nodes_xy.txt";
         nodesFilenameLatLon = "../res/NewMaps/Porto/porto_strong_nodes_latlng.txt";
         edgesFilename = "../res/NewMaps/Porto/porto_strong_edges.txt";
         tagsFilename = "../res/NewMaps/Porto/porto_tags.txt";
-        stcpFilename = "../res/TagExamples/Porto/porto_tags.txt";
-        metroFilename = "../res/TagExamples/Porto/porto_tags.txt";
+        metroFilename = "../res/NewMaps/Porto/porto_metro.txt";
     }
     else{
         nodesFilenameXY = "../res/GridGraphs/" + gridGraph + "/nodes.txt";

@@ -14,7 +14,6 @@ class DataReader {
     string edgesFilename;
     string tagsFilename;
     string metroFilename;
-    string stcpFilename;
     int width,height;
 
     bool realMaps;
@@ -27,6 +26,7 @@ class DataReader {
     void readNodes();
     void readEdges(Transport transport);
     void readTags();
+    void readMetro();
 
     public:
         DataReader();
@@ -44,6 +44,8 @@ class DataReader {
         GraphViewer * getGraphViewer();
 
         void showPath( Path *path, User &user);
+
+        void showMetro(Path *path);
 };
 
 #endif //TOURMATEAPP_DATAREADER_H

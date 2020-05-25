@@ -12,6 +12,10 @@ Vertex::Vertex(int id, const string name, double x, double y): id(id), name(name
 
 }
 
+void Vertex::addEdjeStation(Vertex * src, Vertex * dest, double weight) {
+    adj_stcp.push_back(new Edge(src,dest,weight));
+}
+
 int Vertex::getId() const{
     return id;
 }
@@ -61,6 +65,8 @@ double Vertex::getDist() const{
 }
 
 void Vertex::addEdge(Vertex *dest, double w) {
+    if (!adj_stcp.empty()) //se ja houver esta aresta no metro nao adiciona
+        return;
     adj.push_back(new Edge(this,dest,w));
 }
 
@@ -71,7 +77,6 @@ Edge* Vertex::removeEdge(Vertex *dest) {
             auxE = adj.at(i);
             adj.erase(adj.begin() + i);
             return auxE;
-            //adj.at(i).weight = 1000000; return;
         }
     }
     return auxE;
@@ -127,3 +132,16 @@ void Vertex::setTag(string tag) {
 bool Vertex::operator<(Vertex &vertex) const {
     return this->dist < vertex.dist;
 }
+
+void Vertex::setStation(bool isStation) {
+    this->isStation=isStation;
+}
+
+bool Vertex::getStation() {
+    return isStation;
+}
+
+vector <Edge *> Vertex::getAdjStcp() {
+    return adj_stcp;
+}
+

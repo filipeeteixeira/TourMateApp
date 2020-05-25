@@ -25,6 +25,17 @@ Vertex * Graph::findVertexAlg(const int &id) const {
     return nullptr;
 }
 
+Edge * Graph::findEdge(const int &source, const int &dest) const {
+    for (auto v : vertexSet){
+        for (auto e : v->getAdj()){
+            if (e->getOrig()->getId()==source and e->getDest()->getId()==dest){
+                return e;
+            }
+        }
+    }
+    return nullptr;
+}
+
 bool Graph::addVertex(const int &id, const double &x, const double &y) {
     if ( findVertex(id) != NULL)
         return false;
@@ -39,7 +50,7 @@ bool Graph::addBidirectionalEdge(const int &sourc, const int &dest, double w) {
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->addEdge(v2,w);
-    v2->addEdge(v1,w);
+    //v2->addEdge(v1,w);
     return true;
 }
 
@@ -49,17 +60,8 @@ Edge * Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
     if (v1 == NULL || v2 == NULL)
         return nullptr;
 
-    v2->removeEdge(v1);
+    //v2->removeEdge(v1);
     return v1->removeEdge(v2);
-}
-
-Vertex * Graph::removeVertex(const int & vertexId)
-{
-    auto i = vertexMap.find(vertexId);
-    if (i == vertexMap.end()) {
-        return nullptr;
-    }
-    return vertexSet.at(i->second);
 }
 
 int Graph::getNumVertex() const {
@@ -122,7 +124,7 @@ Path *Graph::getPathTo(int dest) const{
  * Dijkstra algorithm.
  */
 
-void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest, Transport transport) {
+void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest) {
     for (auto &v : vertexSet){
         v->dist=INF;
         v->path= NULL;
@@ -135,14 +137,7 @@ void Graph::dijkstraShortestPath(const Vertex &origin, const Vertex &dest, Trans
 
     while(!Q.empty()){
         Vertex *tmp = Q.extractMin();
-        vector<Edge*> adj;
-        if(transport == bus){
-            adj = tmp->adj_stcp;
-        }
-        else{
-            adj = tmp->adj;
-        }
-        for (auto &w : adj){
+        for (auto &w : tmp->adj){
             if(w->dest->dist>tmp->dist + w->weight){
                 w->dest->dist=tmp->dist + w->weight;
                 w->dest->path=tmp;
@@ -166,14 +161,14 @@ int Graph::dijkstraShortestPathToTransport(const Vertex &origin) {
         auto v = q.extractMin();
         for(auto e : v->adj) {
             auto oldDist = e->dest->dist;
-            if(e->dest->getTag() == "stcp") {
-                return e->dest->getDist();
-            }
             if (relax(v, e->dest, e->weight)) {
                 if (oldDist == INF)
                     q.insert(e->dest);
                 else
                     q.decreaseKey(e->dest);
+                if(e->dest->getStation()) {
+                    return e->dest->getId();
+                }
             }
         }
     }
@@ -264,15 +259,6 @@ Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
     return origin; // This return value won't be used for anything
 }
 
-void Graph::dfsAllPathsVisit(const int origin, const int dest) {
-    Vertex* originV = findVertex(origin);
-    Vertex* destV = findVertex(dest);
-    for(auto vertex : vertexSet)
-        vertex->setVisited(false);
-    dfsAllPaths(originV, destV);
-    printAllPaths(originV, destV);
-}
-
 void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
 
     static int i = 0;
@@ -344,56 +330,6 @@ double Graph::getPathTime(vector<int> path){
     return time;
 }
 
-// utility function for finding paths in graph
-// from source to destination
-vector<vector<int>> Graph::BFS_Paths(int src_id, int dest_id, double maxTime)
-{
-    // create a queue which stores
-    // the paths
-    vector<vector<int>> paths;
-    queue<vector<int> > paths_queue;
-
-    // path vector to store the current path
-    vector<int> path;
-    path.push_back(src_id);
-    paths_queue.push(path);
-    while (!paths_queue.empty()) {
-        path = paths_queue.front();
-        paths_queue.pop();
-        int last = path[path.size() - 1];
-
-        // if last vertex is the desired destination
-        // then print the path
-        if (last == dest_id) {
-            printpath(path);
-            paths.push_back(path);
-            if(paths.size() == 5)
-                break;
-        }
-
-        if(getPathTime(path) > maxTime){
-            continue;
-        }
-
-        // traverse to all the nodes connected to
-        // current vertex and push new path to queue
-        for (auto & e : findVertexAlg(last)->getAdj()) {
-            auto w = e->dest;
-            if (isNotVisited(w->getId(), path)) {
-                vector<int> newpath(path);
-                newpath.push_back(w->getId());
-                //cout << "newpath: " << getPathTime(newpath) << endl;
-                if(getPathTime(path) <= maxTime){
-                    paths_queue.push(newpath);
-                }
-
-            }
-        }
-    }
-
-    return paths;
-}
-
 vector<int> Graph::getNodes(vector<int> path, int start, int end){
     vector<int>::const_iterator first = path.begin() + start;
     vector<int>::const_iterator last =  path.begin() + end + 1;
@@ -434,10 +370,9 @@ double Graph::path_cost(vector<int> path) {
     return pathcost;
 }
 
-vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, Transport transport){
+vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
     vector<Path *> A;
-    dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id), transport);
-    
+    dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
     if(getPathTo(dest_id)->getWeight() > maxTime)
         return A;
 
@@ -455,12 +390,12 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, Transport t
             rootPath->setWeight(path_cost(rootNodes));
 
             for(auto path: A){
-                if(rootPath->getPath() == getNodes(path->getPath(), 0, i)){
+                if(rootPath->getPath() == getNodes(path->getPath(), 0, i) && path->getPath().size() - 1 > i){
                     removed_edges.push_back(removeBidirectionalEdge(path->getPath().at(i), path->getPath().at(i+1)));
                 }
             }
 
-            dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id), transport);
+            dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
             Path *spurPath =  getPathTo(dest_id); //getPathTo ja calcula o weight
 
             if(spurPath!= nullptr) {
@@ -475,7 +410,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, Transport t
             }
         }
 
-        if(B.empty() )
+        if(B.empty() || B.top()->getWeight() > maxTime)
             break;
 
         A.push_back(B.top());
@@ -483,5 +418,13 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, Transport t
     }
 
     return A;
+}
+
+vector<int> Graph::getMetroNodes() {
+    return metroNodes;
+}
+
+void Graph::addMetroNodes(int node) {
+    metroNodes.push_back(node);
 }
 

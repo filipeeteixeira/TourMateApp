@@ -1,0 +1,11 @@
+10
+(6611,Senhora da Hora,21840)
+(21840,Francos,914)
+(914,Casa da Musica,9281)
+(9281,Lapa,8054)
+(8054,Trindade,6224)
+(6224,Bolhao,39255)
+(39255,24 Agosto,21180)
+(21180,Estadio do Dragao,42461)
+(42461,Rio Tinto,6096)
+(6096,Fanzeres,0)

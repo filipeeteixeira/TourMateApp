@@ -374,7 +374,7 @@ void tourOptions(){
 
                 cout << "Finding the best path for you..." << endl;
 
-                if(user.transport == bus){
+                if(user.transport == metro){
                     Path* sourceToTransport;
                     Path* transportToDest;
                     int transportSP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserSP());
@@ -382,11 +382,14 @@ void tourOptions(){
                     int transportEP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserEP());
                     transportToDest =  dataReader.getGraph().getPathTo(transportEP);
 
-                    dataReader.getGraph().YenKSP(transportSP, transportEP, user.getAvailableTime(), user.transport);
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), transportSP, (user.getAvailableTime()-sourceToTransport->getWeight())/2.0));
+                    cout << "->>>>>Go to " << dataReader.getGraph().findVertex(transportSP)->getTag() << " station<<<<<-" << endl;
 
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(transportEP, user.getUserEP()->getId(), (user.getAvailableTime()-transportToDest->getWeight())/2.0));
+                    cout << "->>>>>Leave on " << dataReader.getGraph().findVertex(transportEP)->getTag() << " station<<<<<-" << endl;
                 }
                 else
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime(), user.transport));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
 
                 cout << "Press any key to continue ...";
                 getchar();
@@ -407,7 +410,7 @@ void showTransportOption(){
     cout << "HOW DO YOU WANT TO GO TO YOUR DESTINATION: " << endl;
     cout << "   [1] On foot" << endl;
     cout << "   [2] Car" << endl;
-    cout << "   [3] Bus" << endl;
+    cout << "   [3] Mestro" << endl;
 }
 
 void chooseTransport(){
@@ -425,7 +428,7 @@ void chooseTransport(){
                 user.transport = car;
                 return;
             case 3:
-                user.transport = bus;
+                user.transport = metro;
                 return;
             default:
                 cout << "Invalid option..." << endl;
