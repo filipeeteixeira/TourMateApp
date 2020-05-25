@@ -39,7 +39,7 @@ bool Graph::addBidirectionalEdge(const int &sourc, const int &dest, double w) {
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->addEdge(v2,w);
-    v2->addEdge(v1,w);
+    //v2->addEdge(v1,w);
     return true;
 }
 
@@ -49,7 +49,7 @@ Edge * Graph::removeBidirectionalEdge(const int &sourc, const int &dest) {
     if (v1 == NULL || v2 == NULL)
         return nullptr;
 
-    v2->removeEdge(v1);
+    //v2->removeEdge(v1);
     return v1->removeEdge(v2);
 }
 
@@ -445,7 +445,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, Transport t
     PQ B;
 
     // Limited to the calculation to 10 paths to avoid possible higher temporal complexities
-    for(int k=1; k <= 10; k++){
+    for(int k=1; k <= 50; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
 
