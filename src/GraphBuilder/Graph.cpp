@@ -268,7 +268,7 @@ void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
         i++;
     }
     else
-        {
+    {
         cout << origin->getId() <<"->";
         printAllPaths(origin->paths[i], dest);
     }
@@ -303,7 +303,6 @@ int isNotVisited(int x, vector<int>& path)
  *
  * create a queue which will store path(s) of type vector
 initialise the queue with first path starting from src
-
 Now run a loop till queue is not empty
    get the frontmost path from queue
    check if the lastnode of this path is destination
@@ -339,7 +338,7 @@ vector<int> Graph::getNodes(vector<int> path, int start, int end){
 
 struct Comparator{
     bool operator () (const Path *p1, const Path *p2) {
-        return p1->getWeight()>p2->getWeight();
+        return p1->getWeight()<p2->getWeight();
     }
 };
 
@@ -361,11 +360,11 @@ double Graph::path_cost(vector<int> path) {
     double pathcost = 0;
     if (path.size()>1)
         for (int i=0; i<path.size()-1;i++) {
-               for(auto e : findVertex(path[i])->getAdj()) {
-                   if (e->getDest()->getId()==path[i+1]){
-                       pathcost+=e->getWeight();
-                   }
-               }
+            for(auto e : findVertex(path[i])->getAdj()) {
+                if (e->getDest()->getId()==path[i+1]){
+                    pathcost+=e->getWeight();
+                }
+            }
         }
     return pathcost;
 }
@@ -373,6 +372,7 @@ double Graph::path_cost(vector<int> path) {
 vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
     vector<Path *> A;
     dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
+
     if(getPathTo(dest_id)->getWeight() > maxTime)
         return A;
 
@@ -380,7 +380,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
     PQ B;
 
     // Limited to the calculation to 10 paths to avoid possible higher temporal complexities
-    for(int k=1; k <= 10; k++){
+    for(int k=1; k <= 50; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
 
