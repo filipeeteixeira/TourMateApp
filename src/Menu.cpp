@@ -317,21 +317,16 @@ void sortByUserPreferences(vector<Path*> & paths){
 
 void showRecommendedPaths(vector<Path*> paths){
     cout << "Loading recommendations..." << endl;
-    int i = 0;
     if(paths.empty()){
         cout << "No recommendations found..." << endl;
         return;
     }
     sortByUserPreferences(paths);
     dataReader.showPath(paths[0], user);
-    for(Path *path: paths){
-        cout << "["<< i+1 <<"] " << endl
-        << "Expected Time: " ;
-        outputHoursAndMinutes(path->getWeight());
-        cout << endl;
-        cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
-        i++;
-    }
+    cout << endl  << "Expected Time: " ;
+    outputHoursAndMinutes(paths[0]->getWeight());
+    cout << endl;
+    cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(paths[0]) << endl;
 }
 
 void showTourOptions(){
