@@ -228,23 +228,6 @@ void userOptions(){
     }while(true);
 }
 
-void askForCity(string &city) {
-    cout << "       Available Cities" << endl
-         << "    Aveiro      Gondomar" << endl
-         << "    Braga       Lisboa" << endl
-         << "    Coimbra     Maia" << endl
-         << "    Ermesinde   Porto" << endl
-         << "    Fafe        Viseu" << endl;
-    do{
-        cout << "City name?" << endl;
-        getline(cin, city);
-        normalizeCity(city);
-        if(city == "Aveiro" || city == "Braga" || city == "Coimbra" || city == "Ermesinde" || city == "Fafe" || city == "Gondomar" || city == "Lisboa" || city == "Maia" || city == "Porto"  || city == "Viseu")
-            break;
-        cout << "Invalid city name." << endl;
-    }while(true);
-}
-
 void showTagsOptions(){
     cout << "TAG OPTIONS: " << endl;
     cout << "   [1] Generic" << endl;
@@ -297,6 +280,12 @@ string chooseTag(string msg) {
     }while(true);
 }
 
+/*
+ * ================================================================================================
+ * USER PREFERENCES
+ * ================================================================================================
+ */
+
 //return number of preferences in path
 int checkIfPathHasUserPreferences(Path*  path){
     int total = 0;
@@ -314,6 +303,12 @@ bool comparePaths(Path* path1, Path* path2){
 void sortByUserPreferences(vector<Path*> & paths){
     sort(paths.begin(), paths.end(), comparePaths);
 }
+
+/*
+ * ================================================================================================
+ *
+ * ================================================================================================
+ */
 
 void showRecommendedPaths(vector<Path*> paths){
     cout << "Loading recommendations..." << endl;

@@ -35,9 +35,8 @@ class Graph {
 public:
 	Vertex *findVertex(const int &id) const;
     Vertex *findVertexAlg(const int &id) const;
-    Edge * findEdge(const int &source, const int &dest) const;
 	bool addVertex(const int &id, const double &x, const double &y);
-	bool addBidirectionalEdge(const int &sourc, const int &dest, double w);
+	bool addEdge(const int &sourc, const int &dest, double w);
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
@@ -61,7 +60,7 @@ public:
 
     vector<Path*> YenKSP(int src_id, int dest_id, double k);
 
-    Edge * removeBidirectionalEdge(const int &sourc, const int &dest);
+    Edge * removeEdge(const int &sourc, const int &dest);
 
     int dijkstraShortestPathToTransport(const Vertex &origin);
 

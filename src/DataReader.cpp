@@ -113,21 +113,21 @@ void DataReader::readEdges(Transport transport) {
         if (realMaps) {
             switch (transport) {
                 case onFoot:
-                    graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
+                    graph.addEdge(pointA, pointB, graph.findVertex(pointA)->distance(
                     graph.findVertex(pointB)) / 4.5); //weight between nodes
                     break;
                 case car:
-                    graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
+                    graph.addEdge(pointA, pointB, graph.findVertex(pointA)->distance(
                             graph.findVertex(pointB)) / 50.0);
                     break;
                 case metro:
-                    graph.addBidirectionalEdge(pointA, pointB, graph.findVertex(pointA)->distance(
+                    graph.addEdge(pointA, pointB, graph.findVertex(pointA)->distance(
                             graph.findVertex(pointB)) / 4.5); //todas as arestas que nao sao metro (o user vai andar a pe)
                     break;
             }
         }
         else
-            graph.addBidirectionalEdge(pointA,pointB,1);
+            graph.addEdge(pointA,pointB,1);
     }
 }
 
