@@ -11,7 +11,7 @@
 
 using namespace std;
 
-enum Transport {onFoot, car, bus};
+enum Transport {onFoot, car, metro};
 
 class User {
 public:

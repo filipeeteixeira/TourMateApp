@@ -5,11 +5,12 @@
 #ifndef TOURMATEAPP_VERTEX_H
 #define TOURMATEAPP_VERTEX_H
 
-#include "Edge.h"
+
 #include "MutablePriorityQueue.h"
 #include <vector>
 #include <string>
 #include "../Utils.h"
+#include "Edge.h"
 
 using namespace std;
 
@@ -27,8 +28,10 @@ class Vertex {
 
     double dist = 0;
     vector<Edge *> adj;		// outgoing edges
-    vector<Edge *> adj_metro;
+
     vector<Edge *> adj_stcp;
+    bool isStation;
+
     Vertex* path;
     vector<Vertex *>paths;
     vector<int>time;
@@ -76,6 +79,14 @@ public:
     double getDist() const;
 
     long double distance(Vertex *v);
+
+    void setStation(bool isStation);
+
+    bool getStation();
+
+    void addEdjeStation(Vertex * src, Vertex * dest, double weight);
+
+    vector<Edge *> getAdjStcp();
 
     friend class Graph;
     friend class MutablePriorityQueue<Vertex>;

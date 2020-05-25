@@ -317,21 +317,16 @@ void sortByUserPreferences(vector<Path*> & paths){
 
 void showRecommendedPaths(vector<Path*> paths){
     cout << "Loading recommendations..." << endl;
-    int i = 0;
     if(paths.empty()){
         cout << "No recommendations found..." << endl;
         return;
     }
     sortByUserPreferences(paths);
     dataReader.showPath(paths[0], user);
-    for(Path *path: paths){
-        cout << "["<< i+1 <<"] " << endl
-        << "Expected Time: " ;
-        outputHoursAndMinutes(path->getWeight());
-        cout << endl;
-        cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(path) << endl;
-        i++;
-    }
+    cout << endl  << "Expected Time: " ;
+    outputHoursAndMinutes(paths[0]->getWeight());
+    cout << endl;
+    cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(paths[0]) << endl;
 }
 
 void showTourOptions(){
@@ -355,8 +350,8 @@ void tourOptions(){
                 user.setAvailableTime(time);
                 chooseTransport();
                 clear();
-                cout << "Select the city to make a tour" << endl;
-                askForCity(city);
+                //cout << "Select the city to make a tour" << endl;
+                //askForCity(city);
 
                 cout << "Loading city graph..." << endl;
                 dataReader.readData(city, "",user.transport);
@@ -367,13 +362,14 @@ void tourOptions(){
                     cout << "Graph Strongly Connected: " << "Yes" << endl;
                 else
                     cout << "Graph Strongly Connected: " << "No" << endl;
+                sleep(2);
 
                 getStartPoint(user, dataReader,chooseTag("Where are you"));
                 getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
 
                 cout << "Finding the best path for you..." << endl;
 
-                if(user.transport == bus){
+                if(user.transport == metro){
                     Path* sourceToTransport;
                     Path* transportToDest;
                     int transportSP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserSP());
@@ -381,11 +377,14 @@ void tourOptions(){
                     int transportEP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserEP());
                     transportToDest =  dataReader.getGraph().getPathTo(transportEP);
 
-                    dataReader.getGraph().YenKSP(transportSP, transportEP, user.getAvailableTime(), user.transport);
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), transportSP, (user.getAvailableTime()-sourceToTransport->getWeight())/2.0));
+                    cout << "->>>>>Go to " << dataReader.getGraph().findVertex(transportSP)->getTag() << " station<<<<<-" << endl;
 
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(transportEP, user.getUserEP()->getId(), (user.getAvailableTime()-transportToDest->getWeight())/2.0));
+                    cout << "->>>>>Leave on " << dataReader.getGraph().findVertex(transportEP)->getTag() << " station<<<<<-" << endl;
                 }
                 else
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime(), user.transport));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
 
                 cout << "Press any key to continue ...";
                 getchar();
@@ -406,7 +405,7 @@ void showTransportOption(){
     cout << "HOW DO YOU WANT TO GO TO YOUR DESTINATION: " << endl;
     cout << "   [1] On foot" << endl;
     cout << "   [2] Car" << endl;
-    cout << "   [3] Bus" << endl;
+    cout << "   [3] Metro" << endl;
 }
 
 void chooseTransport(){
@@ -424,7 +423,7 @@ void chooseTransport(){
                 user.transport = car;
                 return;
             case 3:
-                user.transport = bus;
+                user.transport = metro;
                 return;
             default:
                 cout << "Invalid option..." << endl;

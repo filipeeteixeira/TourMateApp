@@ -30,27 +30,26 @@ class Graph {
 
     unordered_map<int, int> vertexMap; //map para guardar a posição no vetor de cada nodeId
 
+    vector<int> metroNodes;
+
 public:
 	Vertex *findVertex(const int &id) const;
     Vertex *findVertexAlg(const int &id) const;
-    void addVertex(Vertex *vertex);
+    Edge * findEdge(const int &source, const int &dest) const;
 	bool addVertex(const int &id, const double &x, const double &y);
 	bool addBidirectionalEdge(const int &sourc, const int &dest, double w);
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
 	Vertex* dfsAllPaths(Vertex* origin, Vertex* dest);
-    void dfsAllPathsVisit(const int origin, const int dest);
 	void printAllPaths(Vertex* origin, Vertex* dest);
     Vertex *initSingleSource(const int &origin);
     bool relax(Vertex *v, Vertex *w, double weight);
-    void dijkstraShortestPath(const Vertex &origin, const Vertex &dest, Transport transport);
+    void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
     vector<int> dfs() const;
     bool stronglyConnected();
 
     void dfsVisit(Vertex *v, vector<int> &res) const;
-
-    vector<vector<int>> BFS_Paths(int src_id, int dest_id, double maxTime);
 
     double getPathTime(vector<int> path);
 
@@ -60,13 +59,16 @@ public:
 
     vector<int> getNodes(vector<int> path, int start, int end);
 
-    vector<Path*> YenKSP(int src_id, int dest_id, double k, Transport transport);
+    vector<Path*> YenKSP(int src_id, int dest_id, double k);
 
     Edge * removeBidirectionalEdge(const int &sourc, const int &dest);
 
-    Vertex * removeVertex(const int & vertexId);
-
     int dijkstraShortestPathToTransport(const Vertex &origin);
+
+    vector<int> getMetroNodes();
+
+    void addMetroNodes(int node);
+
 };
 
 #endif /* GRAPH_H_ */
