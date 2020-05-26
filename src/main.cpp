@@ -33,7 +33,8 @@ void geneateRandomGridGraph(int n, Graph & g) {
                     }
 }
 int main() {
-
+    /*
+    User user;
     ofstream(csv_file);
     csv_file.open("dfs_performance.csv ");
     csv_file <<  "dfs processing grid, average time (micro-seconds)" << endl;
@@ -45,14 +46,14 @@ int main() {
         cout << "dfs processing grid " << n << " x " << n << " ..." << endl;
         auto start = std::chrono::high_resolution_clock::now();
         g.dfs();
-        //g.YenKSP(1010, stoi(to_string(10+n-1) + to_string(10+n-1)), 10000000, onFoot);
+        g.YenKSP(1010, stoi(to_string(10+n-1) + to_string(10+n-1)), 10000000, user);
         auto finish = std::chrono::high_resolution_clock::now();
         auto elapsed = chrono::duration_cast<chrono::microseconds>(finish - start).count();
         cout << "dfs processing grid " << n << " x " << n << " average time (micro-seconds)=" << elapsed << endl;
         csv_file << n << "," << (elapsed / (n*n))  << endl;
     }
     csv_file.close();
-
-    //menu();
+    */
+    menu();
     return 0;
 }

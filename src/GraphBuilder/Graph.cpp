@@ -98,7 +98,17 @@ bool Graph::relax(Vertex *v, Vertex *w, double weight) {
         return false;
 }
 
-Path *Graph::getPathTo(int dest) const{
+bool poiInPreferences(const User& user, Vertex *v){
+    for(const auto& pref: user.getPreferences()){
+        if(pref == v->getTag())
+            return true;
+    }
+    return false;
+}
+
+//dataReader.getGraph().findVertex(i)->getTag() == preference
+Path *Graph::getPathTo(int dest, const User& user) const{
+    int preferencesInPath = 0;
     vector<int> res;
     Vertex *v = findVertexAlg(dest);
     Vertex *auxv = v;
@@ -106,13 +116,14 @@ Path *Graph::getPathTo(int dest) const{
         return nullptr;
     for ( ; v != nullptr; v = v->path) {
         res.push_back(v->getId());
+        if(poiInPreferences(user, v)) preferencesInPath++;
         //cout << v->getId() <<"->";
     }
     reverse(res.begin(), res.end());
     Path * path = new Path(res);
     path->setWeight(auxv->getDist());
+    path->preferences = preferencesInPath;
     return path;
-
 }
 
 /*
@@ -343,14 +354,14 @@ double Graph::path_cost(vector<int> path) {
     return pathcost;
 }
 
-vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
+vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, User user){
     vector<Path *> A;
     dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
 
-    if(getPathTo(dest_id)->getWeight() > maxTime)
+    if(getPathTo(dest_id, user)->getWeight() > maxTime)
         return A;
 
-    A.push_back(getPathTo(dest_id));
+    A.push_back(getPathTo(dest_id, user));
     PQ B;
 
     // Limited to the calculation to 15 paths to avoid possible higher temporal complexities
@@ -372,7 +383,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
 
             //Calcular dijkstra para o grafo sem as arestas removidas
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
-            Path *spurPath =  getPathTo(dest_id); //getPathTo ja calcula o weight
+            Path *spurPath =  getPathTo(dest_id, user); //getPathTo ja calcula o weight
 
             //caso o spurPath seja nulo não queremos adicionar o totalPath uma vez que isso significa que o vertice de destino nao tem ligação com os restantes
             if(spurPath!= nullptr) {

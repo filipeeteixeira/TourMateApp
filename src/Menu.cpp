@@ -297,7 +297,7 @@ int checkIfPathHasUserPreferences(Path*  path){
 }
 
 bool comparePaths(Path* path1, Path* path2){
-    return checkIfPathHasUserPreferences(path1) > checkIfPathHasUserPreferences(path2);
+    return path1->preferences > path2->preferences;
 }
 
 void sortByUserPreferences(vector<Path*> & paths){
@@ -321,7 +321,7 @@ void showRecommendedPaths(vector<Path*> paths){
     cout << endl  << "Expected Time: " ;
     outputHoursAndMinutes(paths[0]->getWeight());
     cout << endl;
-    cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(paths[0]) << endl;
+    cout << "User preferences in path: " << paths[0]->preferences << endl;
 }
 
 void showTourOptions(){
@@ -368,18 +368,18 @@ void tourOptions(){
                     Path* sourceToTransport;
                     Path* transportToDest;
                     int transportSP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserSP());
-                    sourceToTransport =  dataReader.getGraph().getPathTo(transportSP);
+                    sourceToTransport =  dataReader.getGraph().getPathTo(transportSP, user);
                     int transportEP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserEP());
-                    transportToDest =  dataReader.getGraph().getPathTo(transportEP);
+                    transportToDest =  dataReader.getGraph().getPathTo(transportEP, user);
 
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), transportSP, (user.getAvailableTime()-sourceToTransport->getWeight())/2.0));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), transportSP, (user.getAvailableTime()-sourceToTransport->getWeight())/2.0, user));
                     cout << "->>>>>Go to " << dataReader.getGraph().findVertex(transportSP)->getTag() << " station<<<<<-" << endl;
 
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(transportEP, user.getUserEP()->getId(), (user.getAvailableTime()-transportToDest->getWeight())/2.0));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(transportEP, user.getUserEP()->getId(), (user.getAvailableTime()-transportToDest->getWeight())/2.0, user));
                     cout << "->>>>>Leave on " << dataReader.getGraph().findVertex(transportEP)->getTag() << " station<<<<<-" << endl;
                 }
                 else
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime()));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime(), user));
 
                 cout << "Press any key to continue ...";
                 getchar();
