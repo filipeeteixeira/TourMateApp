@@ -53,7 +53,19 @@ int main() {
         csv_file << n << "," << (elapsed / (n*n))  << endl;
     }
     csv_file.close();
-    */
+    *//*
+    DataReader dataReader;
+    User user;
+    user.transport = onFoot;
+
+    dataReader.readData("", "4x4", user.transport);
+    Graph g = dataReader.getGraph();
+    auto ps = g.YenKSP(0, 15, 1442, user);
+    for(auto path : ps){
+        for(auto p : path->getPath())
+            cout<<p<<" ";
+        cout<<endl;
+    }*/
     menu();
     return 0;
 }

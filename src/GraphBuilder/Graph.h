@@ -68,7 +68,7 @@ public:
 
     void addMetroNodes(int node);
 
-    vector<Path *> YenKSP(int src_id, int dest_id, double maxTime, User user);
+    vector<Path *> YenKSP(int src_id, int dest_id, double maxTime, User user, int Kn);
 };
 
 #endif /* GRAPH_H_ */

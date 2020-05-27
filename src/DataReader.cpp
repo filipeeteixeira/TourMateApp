@@ -128,6 +128,7 @@ void DataReader::readEdges(Transport transport) {
         }
         else
             graph.addEdge(pointA,pointB,1);
+            graph.addEdge(pointB,pointA,1);
     }
 }
 
@@ -243,7 +244,7 @@ void DataReader::displayGraph() {
                 graphViewer->addNode(vertex->getId(), vertex->getX(), vertex->getY());
                 graphViewer->setVertexLabel(vertex->getId(), to_string(vertex->getId()));
                 for (auto edge : vertex->getAdj())
-                    graphViewer->addEdge(edgeID++, vertex->getId(), edge->getDest()->getId(), EdgeType::DIRECTED);
+                    graphViewer->addEdge(edgeID++, vertex->getId(), edge->getDest()->getId(), EdgeType::UNDIRECTED);
             }
 
         }
@@ -351,3 +352,8 @@ void DataReader::setFiles(string city, string gridGraph){
 void DataReader::setRealMaps(bool rm) {
     this->realMaps=rm;
 }
+
+string DataReader::getFileNameXY() const {
+    return nodesFilenameXY;
+}
+

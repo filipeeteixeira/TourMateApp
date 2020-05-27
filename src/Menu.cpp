@@ -4,6 +4,7 @@
 //
 
 #include <algorithm>
+#include <chrono>
 #include "Menu.h"
 #include "GraphBuilder/Graph.h"
 #include "GraphBuilder/Vertex.h"
@@ -372,14 +373,14 @@ void tourOptions(){
                     int transportEP = dataReader.getGraph().dijkstraShortestPathToTransport(*user.getUserEP());
                     transportToDest =  dataReader.getGraph().getPathTo(transportEP, user);
 
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), transportSP, (user.getAvailableTime()-sourceToTransport->getWeight())/2.0, user));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), transportSP, (user.getAvailableTime()-sourceToTransport->getWeight())/2.0, user, 15));
                     cout << "->>>>>Go to " << dataReader.getGraph().findVertex(transportSP)->getTag() << " station<<<<<-" << endl;
 
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(transportEP, user.getUserEP()->getId(), (user.getAvailableTime()-transportToDest->getWeight())/2.0, user));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(transportEP, user.getUserEP()->getId(), (user.getAvailableTime()-transportToDest->getWeight())/2.0, user, 15));
                     cout << "->>>>>Leave on " << dataReader.getGraph().findVertex(transportEP)->getTag() << " station<<<<<-" << endl;
                 }
                 else
-                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime(), user));
+                    showRecommendedPaths(dataReader.getGraph().YenKSP(user.getUserSP()->getId(), user.getUserEP()->getId(), user.getAvailableTime(), user, 15));
 
                 cout << "Press any key to continue ...";
                 getchar();
@@ -434,6 +435,7 @@ void showGraphOptions(){
     cout << "GRAPH OPTIONS: " << endl;
     cout << "   [1] Show Graph" << endl;
     cout << "   [2] Load Graph" << endl;
+    cout << "   [3] Test Yen's Algorithm" << endl;
     cout << "   [0] BACK" << endl;
 }
 
@@ -446,18 +448,41 @@ void graphOptions(){
         readInt(option, "Option");
 
         switch(option){
+            default:
+                cout << "Invalid option..." << endl;
+                cout << "Press any key to continue ...";
+                getchar();
+                break;
+            case 0:
+                return;
             case 1:
                 dataReader.displayGraph();
                 break;
             case 2:
                 chooseGraphOptions();
                 break;
-            case 0:
-                return;
-            default:
-                cout << "Invalid option..." << endl;
-                cout << "Press any key to continue ...";
-                getchar();
+            case 3:
+                if(dataReader.getFileNameXY() == ""){
+                    clear();
+                    cout << "There is no grid graph loaded! Load one in Load Graph menu." << endl;
+                    cout << "Press any key to continue ...";
+                    getchar();
+                    break;
+                }
+                chooseYenOptions();
+                auto g = dataReader.getGraph();
+                User user;/*
+                for (int k = 10; k <= 100; k += 10) {
+                    Graph g;
+                    cout << "Generating "<< k << " paths." << endl;
+                    cout << "Generating "<< k << " paths." << endl;
+                    auto start = std::chrono::high_resolution_clock::now();
+                    g.YenKSP(1010, stoi(to_string(10+n-1) + to_string(10+n-1)), 10000000, user);
+                    auto finish = std::chrono::high_resolution_clock::now();
+                    auto elapsed = chrono::duration_cast<chrono::microseconds>(finish - start).count();
+                    cout << "dfs processing grid " << n << " x " << n << " average time (micro-seconds)=" << elapsed << endl;
+                    csv_file << n << "," << (elapsed / (n*n))  << endl;
+                }*/
                 break;
         }
 
@@ -509,6 +534,81 @@ void chooseGraphOptions() {
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
+        }
+
+    }while(true);
+}
+
+void showYenOptions() {
+    cout << "Yen Test Options: " << endl;
+    cout << "   [1] Test Yen Time" << endl;
+    cout << "   [2] Show Resulting Paths" << endl;
+    cout << "   [0] BACK" << endl;
+}
+
+void chooseYenOptions() {
+    unsigned int option;
+
+    do{
+        clear();
+        showYenOptions();
+        readInt(option, "Option");
+        switch(option){
+            case 0:
+                return;
+            default:
+                cout << "Invalid option..." << endl;
+                cout << "Press any key to continue ...";
+                getchar();
+                break;
+            case 1:
+                int dest_;
+                for(int k = 10; k<=100; k+=10) {
+                    Graph g;
+                    cout << "Generating "<< k << " paths." << endl;
+                    cout << "Generating "<< k << " paths." << endl;
+                    auto start = std::chrono::high_resolution_clock::now();
+                    if(dataReader.getFileNameXY() == "../res/GridGraphs/4x4/nodes.txt")
+                        dest_ = 15;
+                    else if(dataReader.getFileNameXY() == "../res/GridGraphs/8x8/nodes.txt")
+                        dest_ = 55;
+                    else
+                        dest_ = 255;
+                    g.YenKSP(0, dest_, INF, user, k);
+
+                    auto finish = std::chrono::high_resolution_clock::now();
+                    auto elapsed = chrono::duration_cast<chrono::microseconds>(finish - start).count();
+                    cout << k << " paths generation average time (micro-seconds)=" << elapsed << endl;
+                }
+                cout << "Press any key to continue ...";
+                getchar();
+                break;
+            case 2:
+                int dest;
+                unsigned int k;
+                vector <Path *> paths;
+                readInt(k,"How many paths do you wish to see");
+                Graph g;
+                g = dataReader.getGraph();
+                if(dataReader.getFileNameXY() == "../res/GridGraphs/4x4/nodes.txt")
+                    dest = 15;
+                else if(dataReader.getFileNameXY() == "../res/GridGraphs/8x8/nodes.txt")
+                    dest = 55;
+                else
+                    dest = 255;
+
+                paths = g.YenKSP(0, dest, INF, user, k);
+                clear();
+                cout << "Paths between the nodes 0 and "<< dest << ":" << endl;
+                for(auto path : paths){
+                    for(auto p : path->getPath())
+                        cout<<p<<" ";
+                    cout<<endl;
+                }
+                cout << "Press any key to continue ...";
+                getchar();
+                break;
+
         }
 
     }while(true);

@@ -354,7 +354,7 @@ double Graph::path_cost(vector<int> path) {
     return pathcost;
 }
 
-vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, User user){
+vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, User user, int Kn){
     vector<Path *> A;
     dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
 
@@ -364,8 +364,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, User user){
     A.push_back(getPathTo(dest_id, user));
     PQ B;
 
-    // Limited to the calculation to 15 paths to avoid possible higher temporal complexities
-    for(int k=1; k <= 15; k++){
+    for(int k=1; k < Kn; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
 
@@ -398,11 +397,9 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, User user){
                     this->addEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
             }
         }
-
         //se B estiver vazio quer dizer que já não há mais caminhos possiveis
         if(B.empty() || B.top()->getWeight() > maxTime) // se o caminho retirado de B tiver um peso maior que o input do utilizador deixamos de calcular caminhos alternativos
             break;
-
         //Adicionar o melhor caminho a A
         A.push_back(B.top());
         B.pop();
