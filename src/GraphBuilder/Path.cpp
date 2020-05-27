@@ -7,6 +7,7 @@
 Path::Path(vector<int> path) {
     this->path=path;
     this->weight=0;
+    this->preferences = 0;
 }
 
 double Path::getWeight() const {
