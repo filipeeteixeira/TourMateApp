@@ -564,8 +564,6 @@ void chooseYenOptions() {
             case 1:
                 int dest_;
                 for(int k = 10; k<=100; k+=10) {
-                    Graph g;
-                    cout << "Generating "<< k << " paths." << endl;
                     cout << "Generating "<< k << " paths." << endl;
                     auto start = std::chrono::high_resolution_clock::now();
                     if(dataReader.getFileNameXY() == "../res/GridGraphs/4x4/nodes.txt")
@@ -574,7 +572,7 @@ void chooseYenOptions() {
                         dest_ = 55;
                     else
                         dest_ = 255;
-                    g.YenKSP(0, dest_, INF, user, k);
+                    dataReader.getGraph().YenKSP(0, dest_, INF, user, k);
 
                     auto finish = std::chrono::high_resolution_clock::now();
                     auto elapsed = chrono::duration_cast<chrono::microseconds>(finish - start).count();
