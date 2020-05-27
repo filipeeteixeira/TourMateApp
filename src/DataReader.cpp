@@ -330,16 +330,24 @@ void DataReader::readData(string city, string gridGraph, User *user) { //só par
     this->readEdges(user);
     if(realMaps) {
         this->readTags();
-        this->readMetro();
+        //this->readMetro();
     }
 }
 
 void DataReader::setFiles(string city, string gridGraph){
     if (realMaps) {
+        /*
         nodesFilenameXY = "../res/NewMaps/Porto/porto_strong_nodes_xy.txt";
         nodesFilenameLatLon = "../res/NewMaps/Porto/porto_strong_nodes_latlng.txt";
         edgesFilename = "../res/NewMaps/Porto/porto_strong_edges.txt";
         tagsFilename = "../res/NewMaps/Porto/porto_tags.txt";
+        metroFilename = "../res/NewMaps/Porto/porto_metro.txt";
+         */
+
+        nodesFilenameXY = "../res/GridGraphs/4x4/nodes.txt";
+        nodesFilenameLatLon = "../res/GridGraphs/4x4/nodes.txt";
+        edgesFilename = "../res/GridGraphs/4x4/edges.txt";
+        tagsFilename = "../res/GridGraphs/4x4/tags.txt";
         metroFilename = "../res/NewMaps/Porto/porto_metro.txt";
     }
     else{
