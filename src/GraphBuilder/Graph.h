@@ -40,8 +40,6 @@ public:
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
-	Vertex* dfsAllPaths(Vertex* origin, Vertex* dest);
-	void printAllPaths(Vertex* origin, Vertex* dest);
     Vertex *initSingleSource(const int &origin);
     bool relax(Vertex *v, Vertex *w, double weight);
     void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
@@ -50,15 +48,14 @@ public:
 
     void dfsVisit(Vertex *v, vector<int> &res) const;
 
-    double getPathTime(vector<int> path);
 
-    Path * getPathTo(int dest) const;
+    Path * getPathTo(int dest, const User& user) const;
 
     double path_cost(vector<int> path);
 
     vector<int> getNodes(vector<int> path, int start, int end);
 
-    vector<Path*> YenKSP(int src_id, int dest_id, double k);
+    //vector<Path*> YenKSP(int src_id, int dest_id, double k);
 
     Edge * removeEdge(const int &sourc, const int &dest);
 
@@ -68,6 +65,7 @@ public:
 
     void addMetroNodes(int node);
 
+    vector<Path *> YenKSP(int src_id, int dest_id, double maxTime, User user, int Kn);
 };
 
 #endif /* GRAPH_H_ */

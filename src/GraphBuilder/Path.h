@@ -15,8 +15,8 @@ private:
     double weight;
 
 public:
+    int preferences;
     Path(vector<int> path);
-
     void setWeight(double weight);
     double getWeight() const;
     vector<int> getPath() const;

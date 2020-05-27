@@ -98,7 +98,17 @@ bool Graph::relax(Vertex *v, Vertex *w, double weight) {
         return false;
 }
 
-Path *Graph::getPathTo(int dest) const{
+bool poiInPreferences(const User& user, Vertex *v){
+    for(const auto& pref: user.getPreferences()){
+        if(pref == v->getTag())
+            return true;
+    }
+    return false;
+}
+
+//dataReader.getGraph().findVertex(i)->getTag() == preference
+Path *Graph::getPathTo(int dest, const User& user) const{
+    int preferencesInPath = 0;
     vector<int> res;
     Vertex *v = findVertexAlg(dest);
     Vertex *auxv = v;
@@ -106,13 +116,14 @@ Path *Graph::getPathTo(int dest) const{
         return nullptr;
     for ( ; v != nullptr; v = v->path) {
         res.push_back(v->getId());
+        if(poiInPreferences(user, v)) preferencesInPath++;
         //cout << v->getId() <<"->";
     }
     reverse(res.begin(), res.end());
     Path * path = new Path(res);
     path->setWeight(auxv->getDist());
+    path->preferences = preferencesInPath;
     return path;
-
 }
 
 /*
@@ -227,59 +238,6 @@ bool Graph::stronglyConnected() {
     return !((int) vec1.size() != getNumVertex() || (int) vec2.size() != getNumVertex());
 }
 
-Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
-    static int time;
-
-    Vertex* path;
-    origin->visited = true;
-    if(origin == dest){
-        origin->time.push_back(time);
-        time -= 2;
-        return dest;
-    }
-    else {
-        for(auto a: origin->adj) {
-            auto vert = a->dest;
-            time += 2;
-            if(time<=16)
-                path = dfsAllPaths(vert, dest);
-            else
-                return NULL;
-            time -= 2;
-            if (path != NULL) {
-                if (path != dest)
-                    for (int i = 0; i < path->paths.size(); i++) {
-                        origin->time.push_back(time);
-                        origin->paths.push_back(path);
-                    }
-                else{
-                    origin->time.push_back(time);
-                    origin->paths.push_back(path);
-                }
-            }
-        }
-    }
-    return origin; // This return value won't be used for anything
-}
-
-void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
-
-    static int i = 0;
-
-    if(origin == dest){
-        cout << origin->getId() << endl;
-        i++;
-    }
-    else
-    {
-        cout << origin->getId() <<"->";
-        printAllPaths(origin->paths[i], dest);
-    }
-
-    if(i < origin->paths.size())
-        printAllPaths(origin, dest);
-}
-
 /*
  *
  *
@@ -343,18 +301,17 @@ double Graph::path_cost(vector<int> path) {
     return pathcost;
 }
 
-vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
+vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime, User user, int Kn){
     vector<Path *> A;
     dijkstraShortestPath(*findVertexAlg(src_id), *findVertexAlg(dest_id));
 
-    if(getPathTo(dest_id)->getWeight() > maxTime)
+    if(getPathTo(dest_id, user)->getWeight() > maxTime)
         return A;
 
-    A.push_back(getPathTo(dest_id));
+    A.push_back(getPathTo(dest_id, user));
     PQ B;
 
-    // Limited to the calculation to 15 paths to avoid possible higher temporal complexities
-    for(int k=1; k <= 15; k++){
+    for(int k=1; k < Kn; k++){
         for(int i=0; i <= A.at(k-1)->getPath().size()-2; i++){
             vector<Edge*> removed_edges = {};
 
@@ -372,7 +329,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
 
             //Calcular dijkstra para o grafo sem as arestas removidas
             dijkstraShortestPath(*findVertexAlg(spurNode), *findVertexAlg(dest_id));
-            Path *spurPath =  getPathTo(dest_id); //getPathTo ja calcula o weight
+            Path *spurPath =  getPathTo(dest_id, user); //getPathTo ja calcula o weight
 
             //caso o spurPath seja nulo não queremos adicionar o totalPath uma vez que isso significa que o vertice de destino nao tem ligação com os restantes
             if(spurPath!= nullptr) {
@@ -387,11 +344,9 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
                     this->addEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
             }
         }
-
         //se B estiver vazio quer dizer que já não há mais caminhos possiveis
         if(B.empty() || B.top()->getWeight() > maxTime) // se o caminho retirado de B tiver um peso maior que o input do utilizador deixamos de calcular caminhos alternativos
             break;
-
         //Adicionar o melhor caminho a A
         A.push_back(B.top());
         B.pop();

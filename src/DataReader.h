@@ -46,6 +46,9 @@ class DataReader {
         void showPath( Path *path, User &user);
 
         void showMetro(Path *path);
+
+        string getFileNameXY() const;
+
 };
 
 #endif //TOURMATEAPP_DATAREADER_H
