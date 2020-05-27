@@ -36,12 +36,10 @@ public:
 	Vertex *findVertex(const int &id) const;
     Vertex *findVertexAlg(const int &id) const;
 	bool addVertex(const int &id, const double &x, const double &y);
-	bool addEdge(const int &sourc, const int &dest, double w);
+	Edge * addEdge(const int &sourc, const int &dest, double w);
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
-	Vertex* dfsAllPaths(Vertex* origin, Vertex* dest);
-	void printAllPaths(Vertex* origin, Vertex* dest);
     Vertex *initSingleSource(const int &origin);
     bool relax(Vertex *v, Vertex *w, double weight);
     void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
@@ -49,8 +47,6 @@ public:
     bool stronglyConnected();
 
     void dfsVisit(Vertex *v, vector<int> &res) const;
-
-    double getPathTime(vector<int> path);
 
     Path * getPathTo(int dest) const;
 
@@ -67,6 +63,12 @@ public:
     vector<int> getMetroNodes();
 
     void addMetroNodes(int node);
+
+    Path * getPathToTEMP(int dest) const;
+
+    Edge * findEdge(int &orig, int &dest);
+
+    Edge * addEdge(Edge * e);
 
 };
 

@@ -31,4 +31,5 @@ void graphOptions();
 
 void showGraphSelectionOptions();
 void chooseGraphOptions();
+
 #endif //TOURMATEAPP_MENU_H

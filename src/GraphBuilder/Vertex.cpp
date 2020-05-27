@@ -64,10 +64,17 @@ double Vertex::getDist() const{
     return dist;
 }
 
-void Vertex::addEdge(Vertex *dest, double w) {
+Edge * Vertex::addEdge(Vertex *dest, double w) {
     if (!adj_stcp.empty()) //se ja houver esta aresta no metro nao adiciona
-        return;
-    adj.push_back(new Edge(this,dest,w));
+        return nullptr;
+    Edge * e = new Edge(this,dest,w);
+    adj.push_back(e);
+    return e;
+}
+
+Edge * Vertex::addEdge(Edge * e) {
+    adj.push_back(e);
+    return e;
 }
 
 Edge* Vertex::removeEdge(Vertex *dest) {
@@ -144,4 +151,5 @@ bool Vertex::getStation() {
 vector <Edge *> Vertex::getAdjStcp() {
     return adj_stcp;
 }
+
 

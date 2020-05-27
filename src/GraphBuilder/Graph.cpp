@@ -33,13 +33,16 @@ bool Graph::addVertex(const int &id, const double &x, const double &y) {
     return true;
 }
 
-bool Graph::addEdge(const int &sourc, const int &dest, double w) {
+Edge * Graph::addEdge(const int &sourc, const int &dest, double w) {
     auto v1 = findVertex(sourc);
     auto v2 = findVertex(dest);
     if (v1 == NULL || v2 == NULL)
-        return false;
-    v1->addEdge(v2,w);
-    return true;
+        return nullptr;
+    return v1->addEdge(v2,w);
+}
+
+Edge * Graph::addEdge(Edge * e) {
+    return e->getOrig()->addEdge(e);
 }
 
 Edge * Graph::removeEdge(const int &sourc, const int &dest) {
@@ -96,6 +99,21 @@ bool Graph::relax(Vertex *v, Vertex *w, double weight) {
     }
     else
         return false;
+}
+
+Path *Graph::getPathToTEMP(int dest) const{
+    vector<int> res;
+    Vertex *v = findVertexAlg(dest);
+    Vertex *auxv = v;
+    if (v == nullptr || v->dist == INF) // missing or disconnected
+        return nullptr;
+    for ( ; v != nullptr; v = v->path) {
+        res.push_back(v->getId());
+    }
+    Path * path = new Path(res);
+    path->setWeight(auxv->getDist());
+    return path;
+
 }
 
 Path *Graph::getPathTo(int dest) const{
@@ -227,76 +245,6 @@ bool Graph::stronglyConnected() {
     return !((int) vec1.size() != getNumVertex() || (int) vec2.size() != getNumVertex());
 }
 
-Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
-    static int time;
-
-    Vertex* path;
-    origin->visited = true;
-    if(origin == dest){
-        origin->time.push_back(time);
-        time -= 2;
-        return dest;
-    }
-    else {
-        for(auto a: origin->adj) {
-            auto vert = a->dest;
-            time += 2;
-            if(time<=16)
-                path = dfsAllPaths(vert, dest);
-            else
-                return NULL;
-            time -= 2;
-            if (path != NULL) {
-                if (path != dest)
-                    for (int i = 0; i < path->paths.size(); i++) {
-                        origin->time.push_back(time);
-                        origin->paths.push_back(path);
-                    }
-                else{
-                    origin->time.push_back(time);
-                    origin->paths.push_back(path);
-                }
-            }
-        }
-    }
-    return origin; // This return value won't be used for anything
-}
-
-void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
-
-    static int i = 0;
-
-    if(origin == dest){
-        cout << origin->getId() << endl;
-        i++;
-    }
-    else
-    {
-        cout << origin->getId() <<"->";
-        printAllPaths(origin->paths[i], dest);
-    }
-
-    if(i < origin->paths.size())
-        printAllPaths(origin, dest);
-}
-
-/*
- *
- *
- * create a queue which will store path(s) of type vector
-initialise the queue with first path starting from src
-Now run a loop till queue is not empty
-   get the frontmost path from queue
-   check if the lastnode of this path is destination
-       if true then print the path
-   run a loop for all the vertices connected to the
-   current vertex i.e. lastnode extracted from path
-      if the vertex is not visited in current path
-         a) create a new path from earlier path and
-             append this vertex
-         b) insert this new path to queue
- * */
-
 /*
  * ================================================================================================
  * YEN'S ALGORITHM
@@ -384,7 +332,7 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
             //Adicionar de volta as arestas removidas do grafo
             for (Edge* edge: removed_edges){
                 if (edge != NULL)
-                    this->addEdge(edge->orig->getId(), edge->dest->getId(), edge->weight);
+                    this->addEdge(edge);
             }
         }
 
@@ -399,4 +347,15 @@ vector<Path*> Graph::YenKSP(int src_id, int dest_id, double maxTime){
 
     return A;
 }
+
+Edge *Graph::findEdge(int &orig, int &dest) {
+    for(auto &v : vertexSet){
+        for (auto &e : v->getAdj()){
+            if (e->getOrig()->getId()==orig and e->getDest()->getId()==dest)
+                return e;
+        }
+    }
+    return nullptr;
+}
+
 

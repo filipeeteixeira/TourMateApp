@@ -6,6 +6,8 @@
 #include "GraphBuilder/Graph.h"
 #include "User.h"
 
+class Graph;
+class User;
 using namespace std;
 
 class DataReader {
@@ -18,24 +20,24 @@ class DataReader {
 
     bool realMaps;
 
-    Graph graph;
+    Graph *graph;
     GraphViewer* graphViewer;
 
     double maxX,maxY,minX,minY;
 
     void readNodes();
-    void readEdges(Transport transport);
+    void readEdges(User *user);
     void readTags();
     void readMetro();
 
     public:
         DataReader();
 
-        Graph getGraph();
+        Graph * getGraph();
 
         void displayGraph();
 
-        void readData(string city, string gridGraph, Transport transport);
+        void readData(string city, string gridGraph, User *user);
 
         void setFiles(string city, string gridGraph);
 
@@ -43,9 +45,9 @@ class DataReader {
 
         GraphViewer * getGraphViewer();
 
-        void showPath( Path *path, User &user);
+        void setGraph(Graph *graph);
 
-        void showMetro(Path *path);
+        void showPath( Path *path, User &user);
 };
 
 #endif //TOURMATEAPP_DATAREADER_H

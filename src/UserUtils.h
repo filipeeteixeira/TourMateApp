@@ -15,4 +15,10 @@ void getStartPoint(User &user, DataReader &dataReader, string startTag);
 
 void getEndPoint(User &user, DataReader &dataReader, string endTag);
 
+int checkIfPathHasUserPreferences(User &user, DataReader &dataReader, Path*  path);
+
+bool comparePaths(Path* path1, Path* path2);
+
+void sortByUserPreferences(vector<Path*> & paths);
+
 #endif //TOURMATEAPP_USERUTILS_H

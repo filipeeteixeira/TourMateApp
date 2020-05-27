@@ -15,6 +15,7 @@
 using namespace std;
 
 class Edge;
+class Path;
 
 class Vertex {
     int id;
@@ -33,10 +34,9 @@ class Vertex {
     bool isStation;
 
     Vertex* path;
-    vector<Vertex *>paths;
     vector<int>time;
     int queueIndex = 0; 		// required by MutablePriorityQueue
-    void addEdge(Vertex *dest, double w);
+    Edge * addEdge(Vertex *dest, double w);
     Edge * removeEdge(Vertex *dest);
 public:
 
@@ -87,6 +87,8 @@ public:
     void addEdjeStation(Vertex * src, Vertex * dest, double weight);
 
     vector<Edge *> getAdjStcp();
+
+    Edge * addEdge(Edge * e);
 
     friend class Graph;
     friend class MutablePriorityQueue<Vertex>;

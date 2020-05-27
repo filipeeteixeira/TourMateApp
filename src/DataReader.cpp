@@ -56,7 +56,7 @@ void DataReader::readNodes() {
             if (y > maxY) maxY = y;
         }
 
-        graph.addVertex(nodeId, x, y);
+        graph->addVertex(nodeId, x, y);
 
     }
 
@@ -82,14 +82,14 @@ void DataReader::readNodes() {
             getline(ssline, tmp, ')');
             lon = stod(tmp);
 
-            Vertex *tmpGraph = graph.findVertex(nodeId2);
+            Vertex *tmpGraph = graph->findVertex(nodeId2);
             tmpGraph->setLat(lat);
             tmpGraph->setLon(lon);
         }
     }
 }
 
-void DataReader::readEdges(Transport transport) {
+void DataReader::readEdges(User *user) {
     ifstream edgesFile(this->edgesFilename);
 
     string line;
@@ -111,23 +111,23 @@ void DataReader::readEdges(Transport transport) {
         pointB=stoi(tmp);
 
         if (realMaps) {
-            switch (transport) {
+            switch (user->getTransport()) {
                 case onFoot:
-                    graph.addEdge(pointA, pointB, graph.findVertex(pointA)->distance(
-                    graph.findVertex(pointB)) / 4.5); //weight between nodes
+                    graph->addEdge(pointA, pointB, graph->findVertex(pointA)->distance(
+                    graph->findVertex(pointB)) / 4.5); //weight between nodes
                     break;
                 case car:
-                    graph.addEdge(pointA, pointB, graph.findVertex(pointA)->distance(
-                            graph.findVertex(pointB)) / 50.0);
+                    graph->addEdge(pointA, pointB, graph->findVertex(pointA)->distance(
+                            graph->findVertex(pointB)) / 50.0);
                     break;
                 case metro:
-                    graph.addEdge(pointA, pointB, graph.findVertex(pointA)->distance(
-                            graph.findVertex(pointB)) / 4.5); //todas as arestas que nao sao metro (o user vai andar a pe)
+                    graph->addEdge(pointA, pointB, graph->findVertex(pointA)->distance(
+                            graph->findVertex(pointB)) / 4.5); //todas as arestas que nao sao metro (o user vai andar a pe)
                     break;
             }
         }
         else
-            graph.addEdge(pointA,pointB,1);
+            graph->addEdge(pointA,pointB,1);
     }
 }
 
@@ -153,7 +153,7 @@ void DataReader::readTags() {
         int numNodes = stoi(line);
         for (int j = 0; j < numNodes; j++) {
             getline(tagsFile, line);
-            Vertex *v = graph.findVertex(stoi(line));
+            Vertex *v = graph->findVertex(stoi(line));
             v->setTag(tag);
         }
     }
@@ -183,12 +183,12 @@ void DataReader::readMetro() {
         getline(metroFile, tmp,')');
         nextStationNode = stoi(tmp);
 
-        Vertex *v = graph.findVertex(stationNode);
-        graph.addMetroNodes(v->getId());
+        Vertex *v = graph->findVertex(stationNode);
+        graph->addMetroNodes(v->getId());
         v->setTag(stationName);
         v->setStation(true);
         if (nextStationNode!=0) {
-            Vertex *v2 = graph.findVertex(nextStationNode);
+            Vertex *v2 = graph->findVertex(nextStationNode);
 
             v->addEdjeStation(v, v2, v->distance(v2) / 30.0);
         }
@@ -196,7 +196,7 @@ void DataReader::readMetro() {
     }
 }
 
-Graph DataReader::getGraph() {
+Graph * DataReader::getGraph() {
     return graph;
 }
 
@@ -219,15 +219,15 @@ void DataReader::displayGraph() {
 
         if(realMaps) {
             double yPercent, xPercent;
-            for (Vertex* vertex : graph.getVertexSet()) {
+            for (Vertex* vertex : graph->getVertexSet()) {
                 yPercent =(vertex->getY() - minY)/(maxY - minY);
                 xPercent = (vertex->getX() - minX)/(maxX - minX);
                 graphViewer->addNode(vertex->getId(), (int)(xPercent*width), (int)(yPercent*height));
-                graphViewer->setVertexSize(vertex->getId(), 5);
+                graphViewer->setVertexSize(vertex->getId(), 1);
             }
 
             int id = 0;
-            for (Vertex* vertex : graph.getVertexSet()) {
+            for (Vertex* vertex : graph->getVertexSet()) {
                 for (auto edge : vertex->getAdj()) {
                     graphViewer->addEdge(id, vertex->getId(), edge->getDest()->getId(), EdgeType::UNDIRECTED);
                     graphViewer->setEdgeColor(id, "gray");
@@ -239,11 +239,13 @@ void DataReader::displayGraph() {
         }
         else{ //grid maps
             int edgeID = 0;
-            for (auto vertex : this->graph.getVertexSet()) {
+            for (auto vertex : this->graph->getVertexSet()) {
                 graphViewer->addNode(vertex->getId(), vertex->getX(), vertex->getY());
                 graphViewer->setVertexLabel(vertex->getId(), to_string(vertex->getId()));
-                for (auto edge : vertex->getAdj())
+                for (auto edge : vertex->getAdj()) {
                     graphViewer->addEdge(edgeID++, vertex->getId(), edge->getDest()->getId(), EdgeType::DIRECTED);
+                }
+
             }
 
         }
@@ -258,9 +260,8 @@ void DataReader::displayGraph() {
 }
 
 void DataReader::showPath(Path *path, User &user){
-
     int id =0;
-    for(auto v: graph.getVertexSet()){
+    for(auto v: graph->getVertexSet()){
         for (auto e : v->getAdj()) {
             graphViewer->removeEdge(id);
             id++;
@@ -268,28 +269,28 @@ void DataReader::showPath(Path *path, User &user){
     }
 
     Vertex * tmpVertex= nullptr;
-    for (int i=0; i<path->getPath().size();i++) {
+    for (int i=0; i<path->getPath().size()-1;i++) {
         graphViewer->setVertexColor(path->getPath()[i], "YELLOW");
         graphViewer->setVertexSize(path->getPath()[i], 10);
-        for( auto &up : user.getPreferences()){
-            tmpVertex = graph.findVertex(path->getPath()[i]);
-            if(tmpVertex->getTag()== up){
+        tmpVertex = graph->findVertex(path->getPath()[i]);
+        for( auto &up : user.getPreferences()->getUserPreferences()){
+            if(tmpVertex->getId()== up->getId()){
                 graphViewer->setVertexSize(tmpVertex->getId(), 10);
                 graphViewer->setVertexColor(tmpVertex->getId(), "BLUE");
             }
         }
 
     }
-    /*--------------- show metro ---------------*/
-    if(user.transport==metro) {
-        for (int i = 0; i < graph.getMetroNodes().size(); i++) {
-            graphViewer->setVertexColor(graph.getMetroNodes()[i], "PINK");
-            graphViewer->setVertexSize(graph.getMetroNodes()[i], 10);
+    //--------------- show metro ---------------
+    if(user.getTransport()==metro) {
+        for (int i = 0; i < graph->getMetroNodes().size(); i++) {
+            graphViewer->setVertexColor(graph->getMetroNodes()[i], "PINK");
+            graphViewer->setVertexSize(graph->getMetroNodes()[i], 10);
         }
 
         id = 0;
-        for (auto idNode : graph.getMetroNodes()) {
-            for (auto e : graph.findVertex(idNode)->getAdjStcp()) {
+        for (auto idNode : graph->getMetroNodes()) {
+            for (auto e : graph->findVertex(idNode)->getAdjStcp()) {
                 graphViewer->addEdge(id, e->getOrig()->getId(), e->getDest()->getId(), EdgeType::UNDIRECTED);
                 graphViewer->setEdgeColor(id, "PINK");
                 graphViewer->setEdgeThickness(id, 10);
@@ -297,9 +298,9 @@ void DataReader::showPath(Path *path, User &user){
             }
         }
     }
-    /* ---------------------*/
+     //---------------------
 
-    for (Vertex* vertex : graph.getVertexSet()) {
+    for (Vertex* vertex : graph->getVertexSet()) {
         for (auto edge : vertex->getAdj()) {
                 graphViewer->removeEdge(id);
                 graphViewer->addEdge(id, vertex->getId(), edge->getDest()->getId(), EdgeType::UNDIRECTED);
@@ -320,13 +321,13 @@ void DataReader::showPath(Path *path, User &user){
     graphViewer->rearrange();
 }
 
-void DataReader::readData(string city, string gridGraph, Transport transport) { //só para debug depois fica só a cidade
-    this->graph = Graph();
+void DataReader::readData(string city, string gridGraph, User *user) { //só para debug depois fica só a cidade
+    this->graph = new Graph();
 
     this->setFiles(city, gridGraph);
 
     this->readNodes();
-    this->readEdges(transport);
+    this->readEdges(user);
     if(realMaps) {
         this->readTags();
         this->readMetro();
@@ -350,4 +351,8 @@ void DataReader::setFiles(string city, string gridGraph){
 
 void DataReader::setRealMaps(bool rm) {
     this->realMaps=rm;
+}
+
+void DataReader::setGraph(Graph *graph){
+    this->graph=graph;
 }

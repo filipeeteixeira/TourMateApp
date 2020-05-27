@@ -80,6 +80,7 @@ void showPreferenceSelection() {
     cout << "   [10] *" << endl;
     cout << "   [0] BACK" << endl;
 }
+
 void choosePreferences() {
     unsigned int option;
 
@@ -89,52 +90,52 @@ void choosePreferences() {
         readInt(option, "Option");
         switch(option){
             case 10:
-                user.addPreference("*");
+                user.addPreferences(&dataReader, "generic");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 9:
-                user.addPreference("museum");
+                user.addPreferences(&dataReader, "museum");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 8:
-                user.addPreference("camp_site");
+                user.addPreferences(&dataReader,"camp_site");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 7:
-                user.addPreference("artwork");
+                user.addPreferences(&dataReader,"artwork");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 6:
-                user.addPreference("picnic_site");
+                user.addPreferences(&dataReader,"picnic_site");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 5:
-                user.addPreference("guest_house");
+                user.addPreferences(&dataReader,"guest_house");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 4:
-                user.addPreference("viewpoint");
+                user.addPreferences(&dataReader,"viewpoint");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
-                user.addPreference("attraction");
+                user.addPreferences(&dataReader,"attraction");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
-                user.addPreference("hotel");
+                user.addPreferences(&dataReader,"hotel");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 1:
-                user.addPreference("information");
+                user.addPreferences(&dataReader,"information");
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
@@ -152,12 +153,9 @@ void choosePreferences() {
 
 void showUserInfo() {
     cout << "USER INFO:" << endl;
-    list <string> pref = user.getPreferences();
     cout << "   Name: " << user.getName() << endl;
     cout << "   Age: " << user.getAge() << endl;
     cout << "   Preferences:" <<endl;
-    for(auto p: pref)
-        cout << "   " << p << endl;
 }
 
 void userLoadOptions(){
@@ -245,11 +243,11 @@ void showTagsOptions(){
 string chooseTag(string msg) {
     unsigned int option;
 
-    do{
+    do {
         clear();
         showTagsOptions();
         readInt(option, msg);
-        switch(option){
+        switch (option) {
             case 1:
                 return "*";
             case 2:
@@ -277,38 +275,35 @@ string chooseTag(string msg) {
                 break;
         }
 
-    }while(true);
+    } while (true);
 }
 
-/*
- * ================================================================================================
- * USER PREFERENCES
- * ================================================================================================
- */
-
-//return number of preferences in path
-int checkIfPathHasUserPreferences(Path*  path){
-    int total = 0;
-    for(auto i: path->getPath()){
-        for(const auto& preference: user.getPreferences())
-            if(dataReader.getGraph().findVertex(i)->getTag() == preference) total++;
+vector<int> buildPath(vector<int> YenPath ){
+    vector<int> totalPath;
+    bool interest=false;
+    for (int i=0; i< YenPath.size()-1;i++){
+        for (auto v : user.getPreferences()->getGraph()->findEdge(YenPath[i],YenPath[i+1])->getEdgePath()->getPath()){
+            for (auto &p : YenPath){
+                if(p==v) {
+                    interest = true;
+                    totalPath.push_back(p);
+                }
+            }
+            if (!interest)
+                totalPath.push_back(v);
+            interest=false;
+        }
     }
-    return total;
+    return totalPath;
 }
 
 bool comparePaths(Path* path1, Path* path2){
-    return checkIfPathHasUserPreferences(path1) > checkIfPathHasUserPreferences(path2);
+    return path1->getPath().size() > path2->getPath().size();
 }
 
-void sortByUserPreferences(vector<Path*> & paths){
+void sortByUserPreferences(vector<Path*> & paths) {
     sort(paths.begin(), paths.end(), comparePaths);
 }
-
-/*
- * ================================================================================================
- *
- * ================================================================================================
- */
 
 void showRecommendedPaths(vector<Path*> paths){
     cout << "Loading recommendations..." << endl;
@@ -317,11 +312,11 @@ void showRecommendedPaths(vector<Path*> paths){
         return;
     }
     sortByUserPreferences(paths);
-    dataReader.showPath(paths[0], user);
+    dataReader.showPath(new Path(buildPath(paths[0]->getPath())), user);
     cout << endl  << "Expected Time: " ;
     outputHoursAndMinutes(paths[0]->getWeight());
     cout << endl;
-    cout << "User preferences in path: " <<  checkIfPathHasUserPreferences(paths[0]) << endl;
+    cout << "User preferences in path: " <<  paths[0]->getPath().size() << endl;
 }
 
 void showTourOptions(){
@@ -343,17 +338,16 @@ void tourOptions(){
                 dataReader.setRealMaps(true);
                 readDouble(time, "Available time (in hours)");
                 user.setAvailableTime(time);
+
                 chooseTransport();
                 clear();
-                //cout << "Select the city to make a tour" << endl;
-                //askForCity(city);
 
                 cout << "Loading city graph..." << endl;
-                dataReader.readData(city, "",user.transport);
+                dataReader.readData(city, "",&user);
                 cout << "Graph loaded." << endl;
 
-                Graph g = dataReader.getGraph();
-                if(g.stronglyConnected())
+                Graph *g = dataReader.getGraph();
+                if(g->stronglyConnected())
                     cout << "Graph Strongly Connected: " << "Yes" << endl;
                 else
                     cout << "Graph Strongly Connected: " << "No" << endl;
@@ -362,7 +356,15 @@ void tourOptions(){
                 getStartPoint(user, dataReader,chooseTag("Where are you"));
                 getEndPoint(user, dataReader,chooseTag("Where do you want to end the tour"));
 
-                cout << "Finding the best path for you..." << endl;
+                choosePreferences();
+                cout << "done preferences!" << endl;
+
+                user.getPreferences()->buildPreferencesGraph(dataReader.getGraph(),&user);
+                dataReader.displayGraph();
+                vector<Path*> YenPaths = user.getPreferences()->getGraph()->YenKSP(user.getUserSP()->getId(),user.getUserEP()->getId(),user.getAvailableTime());
+                showRecommendedPaths(YenPaths);
+
+                /*cout << "Finding the best path for you..." << endl;
 
                 if(user.transport == metro){
                     Path* sourceToTransport;
@@ -383,6 +385,7 @@ void tourOptions(){
 
                 cout << "Press any key to continue ...";
                 getchar();
+                 */
             }
             case 0:
                 return;
@@ -412,13 +415,13 @@ void chooseTransport(){
 
         switch(option){
             case 1:
-                user.transport = onFoot;
+                user.setTransport(onFoot);
                 return;
             case 2:
-                user.transport = car;
+                user.setTransport(car);
                 return;
             case 3:
-                user.transport = metro;
+                user.setTransport(metro);
                 return;
             default:
                 cout << "Invalid option..." << endl;
@@ -483,21 +486,21 @@ void chooseGraphOptions() {
         switch(option){
             case 1:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","4x4",user.transport);
+                dataReader.readData("","4x4",&user);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 2:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","8x8",user.transport);
+                dataReader.readData("","8x8",&user);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();
                 break;
             case 3:
                 dataReader.setRealMaps(false);
-                dataReader.readData("","16x16",user.transport);
+                dataReader.readData("","16x16",&user);
                 cout << "Graph Loaded..." << endl;
                 cout << "Press any key to continue ...";
                 getchar();

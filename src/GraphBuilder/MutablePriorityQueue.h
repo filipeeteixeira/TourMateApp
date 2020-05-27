@@ -10,8 +10,6 @@
 #define SRC_MUTABLEPRIORITYQUEUE_H_
 
 #include <vector>
-
-
 using namespace std;
 
 /**

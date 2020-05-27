@@ -10,5 +10,5 @@ include_directories(lib)
 add_executable(TourMateApp src/main.cpp
         lib/connection.cpp lib/graphviewer.cpp src/DataReader.cpp src/DataReader.h src/GraphBuilder/Graph.h
         src/GraphBuilder/Vertex.h src/GraphBuilder/Edge.h src/GraphBuilder/Vertex.cpp src/GraphBuilder/Edge.cpp
-        src/GraphBuilder/MutablePriorityQueue.h src/GraphBuilder/Graph.cpp src/Menu.cpp src/Menu.h src/Utils.h src/User.cpp src/User.h src/Utils.cpp src/UserUtils.cpp src/UserUtils.h src/GraphBuilder/Path.cpp src/GraphBuilder/Path.h)
+        src/GraphBuilder/MutablePriorityQueue.h src/GraphBuilder/Graph.cpp src/Menu.cpp src/Menu.h src/Utils.h src/User.cpp src/User.h src/Utils.cpp src/UserUtils.cpp src/UserUtils.h src/GraphBuilder/Path.cpp src/GraphBuilder/Path.h src/Preferences.cpp src/Preferences.h)
 

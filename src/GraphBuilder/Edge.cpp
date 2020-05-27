@@ -19,3 +19,11 @@ double Edge::getWeight() const{
 Vertex *Edge::getOrig() const {
     return orig;
 }
+
+Path *Edge::getEdgePath() const {
+    return path;
+}
+
+void Edge::setEdgePath(Path * path) {
+    this->path=path;
+}

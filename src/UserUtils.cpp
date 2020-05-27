@@ -2,6 +2,7 @@
 // Created by filip on 20/05/2020.
 //
 
+#include <algorithm>
 #include "UserUtils.h"
 
 void showTags(GraphViewer* gv, const vector<Vertex*>& vertexes) {
@@ -17,15 +18,15 @@ void showTags(GraphViewer* gv, const vector<Vertex*>& vertexes) {
 void getStartPoint(User &user, DataReader &dataReader, string startTag) {
     cout << "Loading..." <<endl;
 
-    dataReader.displayGraph();
+    //dataReader.displayGraph();
 
     vector<Vertex*> tags;
-    for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
-        dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 0);
+    for(Vertex* vertex: dataReader.getGraph()->getVertexSet()) {
+        //dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 0);
         if(vertex->getTag() == startTag)
             tags.push_back(vertex);
     }
-    showTags(dataReader.getGraphViewer(), tags);
+    //showTags(dataReader.getGraphViewer(), tags);
 
     unsigned int startPoint;
     do{
@@ -36,31 +37,27 @@ void getStartPoint(User &user, DataReader &dataReader, string startTag) {
         cout << "Invalid point." << endl;
     }while(true);
 
-    //dataReader.getGraphViewer()->closeWindow();
     user.setUserSP(tags.at(startPoint));
-    //delete dataReader.getGraphViewer();
 }
 
 void getEndPoint(User &user, DataReader &dataReader, string endTag) {
     cout << "Loading..." << endl;
-    //dataReader.displayGraph();
-    //cout << user.getUserSP()->getId()<< endl;
 
     vector<Vertex*> tags;
-    for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
-        dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 0);
-        dataReader.getGraphViewer()->clearVertexLabel(vertex->getId());
+    for(Vertex* vertex: dataReader.getGraph()->getVertexSet()) {
+        //dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 0);
+        //dataReader.getGraphViewer()->clearVertexLabel(vertex->getId());
         if(vertex->getTag() == endTag)
             tags.push_back(vertex);
     }
 
-    showTags(dataReader.getGraphViewer(), tags);
+    //showTags(dataReader.getGraphViewer(), tags);
 
-    dataReader.getGraphViewer()->setVertexColor(user.getUserSP()->getId(),"green");
-    dataReader.getGraphViewer()->setVertexSize(user.getUserSP()->getId(),20);
-    dataReader.getGraphViewer()->setVertexLabel(user.getUserSP()->getId(),"START");
+    //dataReader.getGraphViewer()->setVertexColor(user.getUserSP()->getId(),"green");
+    //dataReader.getGraphViewer()->setVertexSize(user.getUserSP()->getId(),20);
+    //dataReader.getGraphViewer()->setVertexLabel(user.getUserSP()->getId(),"START");
 
-    dataReader.getGraphViewer()->rearrange();
+    //dataReader.getGraphViewer()->rearrange();
 
     unsigned int endPoint;
     do{
@@ -71,11 +68,29 @@ void getEndPoint(User &user, DataReader &dataReader, string endTag) {
         cout << "Invalid point." << endl;
     }while(true);
 
-    //dataReader.getGraphViewer()->closeWindow();
     user.setUserEP(tags.at(endPoint));
 
-    for(Vertex* vertex: dataReader.getGraph().getVertexSet()) {
-        dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 1);
-        dataReader.getGraphViewer()->clearVertexLabel(vertex->getId());
-    }
+    //for(Vertex* vertex: dataReader.getGraph()->getVertexSet()) {
+    //    dataReader.getGraphViewer()->setVertexSize(vertex->getId(), 1);
+    //    dataReader.getGraphViewer()->clearVertexLabel(vertex->getId());
+    //}
 }
+
+/*
+//return number of preferences in path
+int checkIfPathHasUserPreferences(User &user, DataReader &dataReader, Path*  path){
+    int total = 0;
+    for(auto i: path->getPath()){
+        for(const auto& preference: user.getPreferences())
+            if(dataReader.getGraph().findVertex(i)->getTag() == preference) total++;
+    }
+    return total;
+}
+
+bool comparePaths(Path* path1, Path* path2){
+    return checkIfPathHasUserPreferences(path1) > checkIfPathHasUserPreferences(path2);
+}
+
+void sortByUserPreferences(vector<Path*> & paths){
+    sort(paths.begin(), paths.end(), comparePaths);
+}*/
