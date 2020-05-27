@@ -40,8 +40,6 @@ public:
 	int getNumVertex() const;
 	vector<Vertex *> getVertexSet() const;
 
-	Vertex* dfsAllPaths(Vertex* origin, Vertex* dest);
-	void printAllPaths(Vertex* origin, Vertex* dest);
     Vertex *initSingleSource(const int &origin);
     bool relax(Vertex *v, Vertex *w, double weight);
     void dijkstraShortestPath(const Vertex &origin, const Vertex &dest);
@@ -50,7 +48,6 @@ public:
 
     void dfsVisit(Vertex *v, vector<int> &res) const;
 
-    double getPathTime(vector<int> path);
 
     Path * getPathTo(int dest, const User& user) const;
 

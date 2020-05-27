@@ -238,59 +238,6 @@ bool Graph::stronglyConnected() {
     return !((int) vec1.size() != getNumVertex() || (int) vec2.size() != getNumVertex());
 }
 
-Vertex* Graph::dfsAllPaths(Vertex* origin, Vertex* dest) {
-    static int time;
-
-    Vertex* path;
-    origin->visited = true;
-    if(origin == dest){
-        origin->time.push_back(time);
-        time -= 2;
-        return dest;
-    }
-    else {
-        for(auto a: origin->adj) {
-            auto vert = a->dest;
-            time += 2;
-            if(time<=16)
-                path = dfsAllPaths(vert, dest);
-            else
-                return NULL;
-            time -= 2;
-            if (path != NULL) {
-                if (path != dest)
-                    for (int i = 0; i < path->paths.size(); i++) {
-                        origin->time.push_back(time);
-                        origin->paths.push_back(path);
-                    }
-                else{
-                    origin->time.push_back(time);
-                    origin->paths.push_back(path);
-                }
-            }
-        }
-    }
-    return origin; // This return value won't be used for anything
-}
-
-void Graph::printAllPaths(Vertex* origin, Vertex* dest) {
-
-    static int i = 0;
-
-    if(origin == dest){
-        cout << origin->getId() << endl;
-        i++;
-    }
-    else
-    {
-        cout << origin->getId() <<"->";
-        printAllPaths(origin->paths[i], dest);
-    }
-
-    if(i < origin->paths.size())
-        printAllPaths(origin, dest);
-}
-
 /*
  *
  *
